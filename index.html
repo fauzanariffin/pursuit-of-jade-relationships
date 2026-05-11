@@ -24,11 +24,80 @@
     --red-l:#e25a4a;
     --rule: rgba(201,168,76,.18);
     --rule-2: rgba(201,168,76,.10);
+    /* themable surfaces */
+    --surface-head: linear-gradient(180deg, rgba(20,16,12,.98), rgba(7,6,10,.92));
+    --surface-rail: linear-gradient(180deg, rgba(14,11,10,.88), rgba(7,6,10,.92));
+    --surface-panel: linear-gradient(160deg, rgba(20,16,12,.98), rgba(10,8,7,.98));
+    --surface-hud: rgba(14,11,10,.92);
+    --surface-tip: rgba(14,11,10,.96);
+    --surface-input: rgba(7,6,10,.7);
+    --surface-pill: rgba(7,6,10,.6);
+    --surface-legend: rgba(7,6,10,.55);
+    --hover-soft: rgba(201,168,76,.07);
+    --hover-bold: rgba(201,168,76,.12);
+    --halo-stroke: .14;
+    --halo-fill: .035;
+    --backdrop-mix: screen;
+    --shadow-strong: 0 18px 50px rgba(0,0,0,.7);
+    --shadow-soft: 0 14px 40px rgba(0,0,0,.7);
   }
+
+  /* ───── Light theme ─────────────────────────────── */
+  :root[data-theme="light"] {
+    --bg-0: #f5edd6;
+    --bg-1: #ece1c1;
+    --bg-2: #faf2dc;
+    --ink:  #1f160c;
+    --ink-d: #4a3a22;
+    --ink-x: #7a6a4e;
+    --ink-xx: #a89a7c;
+    --gold:  #8a7028;
+    --gold-l:#6a5418;   /* used for headings → keep dark on light */
+    --gold-d:#c9a84c;
+    --jade:  #2e7a5e;
+    --jade-l:#1f5a44;
+    --red:   #a32418;
+    --red-l: #7d1a10;
+    --rule:   rgba(80,55,18,.22);
+    --rule-2: rgba(80,55,18,.12);
+    --surface-head: linear-gradient(180deg, rgba(252,246,228,.98), rgba(244,234,210,.94));
+    --surface-rail: linear-gradient(180deg, rgba(248,240,218,.95), rgba(238,226,200,.95));
+    --surface-panel: linear-gradient(160deg, rgba(252,246,228,.98), rgba(244,233,205,.98));
+    --surface-hud: rgba(250,242,220,.94);
+    --surface-tip: rgba(252,246,228,.98);
+    --surface-input: rgba(252,246,228,.85);
+    --surface-pill: rgba(252,246,228,.7);
+    --surface-legend: rgba(252,246,228,.6);
+    --hover-soft: rgba(80,55,18,.06);
+    --hover-bold: rgba(80,55,18,.12);
+    --halo-stroke: .22;
+    --halo-fill: .06;
+    --backdrop-mix: multiply;
+    --shadow-strong: 0 18px 50px rgba(60,40,15,.22);
+    --shadow-soft: 0 14px 40px rgba(60,40,15,.18);
+  }
+  :root[data-theme="light"] body::before {
+    background:
+      radial-gradient(ellipse 70% 50% at 22% 18%, rgba(46,122,94,.10) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 80% 80%, rgba(163,36,24,.08) 0%, transparent 62%),
+      radial-gradient(ellipse 90% 70% at 50% 50%, rgba(138,112,40,.04) 0%, transparent 70%);
+  }
+  :root[data-theme="light"] body::after {
+    opacity:.35;
+    background-image:
+      radial-gradient(rgba(80,55,18,.08) 1px, transparent 1px),
+      radial-gradient(rgba(80,55,18,.05) 1px, transparent 1px);
+  }
+  :root[data-theme="light"] .brand .chi { text-shadow: 0 0 22px rgba(46,122,94,.18); }
+  :root[data-theme="light"] .brand .latin { text-shadow: 0 0 22px rgba(138,112,40,.18); }
+  :root[data-theme="light"] .node-name { fill: var(--gold-l); }
+  :root[data-theme="light"] .node-sub { fill: var(--ink-x); }
+  :root[data-theme="light"] .panel-name { color: var(--gold-l); }
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { height:100%; }
   body {
     background: var(--bg-0);
+    transition: background .3s ease, color .3s ease;
     color: var(--ink);
     font-family: 'Cormorant Garamond', Georgia, serif;
     overflow:hidden;
@@ -59,7 +128,7 @@
     padding: 14px 22px;
     display:flex; align-items:center; justify-content:space-between;
     gap:18px; flex-wrap:wrap;
-    background: linear-gradient(180deg, rgba(20,16,12,.98), rgba(7,6,10,.92));
+    background: var(--surface-head);
     border-bottom:1px solid var(--rule);
     box-shadow: 0 1px 0 rgba(255,220,140,.04) inset, 0 18px 36px -28px rgba(0,0,0,.9);
   }
@@ -95,7 +164,7 @@
   .search {
     position:relative;
     display:flex; align-items:center;
-    background: rgba(7,6,10,.7);
+    background: var(--surface-input);
     border:1px solid var(--rule);
     border-radius: 2px;
     padding: 6px 10px;
@@ -117,11 +186,11 @@
   }
   .search-results {
     position:absolute; top: calc(100% + 6px); left:0; right:0;
-    background: rgba(14,11,10,.98);
+    background: var(--surface-tip);
     border:1px solid var(--rule); border-radius:2px;
     max-height: 280px; overflow-y:auto;
     display:none; z-index: 220;
-    box-shadow: 0 14px 40px rgba(0,0,0,.7);
+    box-shadow: var(--shadow-soft);
   }
   .search-results.open { display:block; }
   .sr-item {
@@ -141,7 +210,7 @@
   .legend {
     display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap;
     padding: 6px 12px;
-    background: rgba(7,6,10,.55);
+    background: var(--surface-legend);
     border:1px solid var(--rule-2); border-radius:2px;
   }
   .legend-col { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
@@ -160,7 +229,7 @@
   #rail {
     width: 240px; flex-shrink:0; position:relative; z-index:5;
     display:flex; flex-direction:column;
-    background: linear-gradient(180deg, rgba(14,11,10,.88), rgba(7,6,10,.92));
+    background: var(--surface-rail);
     border-right:1px solid var(--rule);
   }
   .rail-head {
@@ -181,7 +250,7 @@
   .filter-pill {
     font-family:'Cinzel', serif; font-size:.58rem; letter-spacing:.12em;
     padding: 4px 9px; border-radius:20px;
-    background: rgba(7,6,10,.6); border:1px solid var(--rule);
+    background: var(--surface-pill); border:1px solid var(--rule);
     color: var(--ink-x); cursor:pointer; transition: all .18s;
     text-transform: uppercase;
   }
@@ -271,11 +340,11 @@
   /* Detail Panel */
   #detail-panel {
     position:absolute; right: 16px; top: 16px; width: 320px;
-    background: linear-gradient(160deg, rgba(20,16,12,.98), rgba(10,8,7,.98));
+    background: var(--surface-panel);
     border:1px solid var(--rule);
     border-radius: 3px;
     display:none; z-index:100;
-    box-shadow: 0 18px 50px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,220,140,.05);
+    box-shadow: var(--shadow-strong), inset 0 1px 0 rgba(255,220,140,.05);
     max-height: calc(100% - 32px);
     overflow:hidden;
     flex-direction:column;
@@ -398,7 +467,7 @@
     display:flex; flex-direction:column; gap:6px; z-index:90;
   }
   .ctrl-btn {
-    background: rgba(14,11,10,.92);
+    background: var(--surface-hud);
     border:1px solid var(--rule);
     color: var(--gold);
     width: 32px; height: 32px;
@@ -426,7 +495,7 @@
 
   #tooltip {
     position:absolute; pointer-events:none; display:none;
-    background: rgba(14,11,10,.96);
+    background: var(--surface-tip);
     border:1px solid var(--rule);
     border-radius: 2px;
     padding: 8px 12px;
@@ -434,7 +503,7 @@
     color: var(--ink); font-size:.92rem;
     max-width: 220px;
     z-index: 200;
-    box-shadow: 0 10px 24px rgba(0,0,0,.5);
+    box-shadow: var(--shadow-soft);
   }
   #tooltip strong {
     font-family:'Cinzel', serif; font-weight:600;
@@ -540,6 +609,7 @@
       <button class="ctrl-btn" id="zoom-out"  title="Zoom out">－</button>
       <button class="ctrl-btn" id="zoom-reset" title="Recenter">⊙</button>
       <button class="ctrl-btn" data-toggle="labels" id="toggle-labels" title="Toggle link labels">A</button>
+      <button class="ctrl-btn" id="toggle-theme" title="Toggle light / dark">☾</button>
     </div>
     <div id="scale-indicator">100%</div>
 
@@ -1255,6 +1325,25 @@ window.addEventListener("resize", () => {
      .force("yFac", d3.forceY(d => factionAngles[d.group].cy * H).strength(.10))
      .alpha(.3).restart();
 });
+
+// ── Theme toggle ────────────────────────────────────────
+(function initTheme(){
+  const saved = localStorage.getItem("poj-theme") || "dark";
+  if (saved === "light") document.documentElement.setAttribute("data-theme","light");
+  const btn = document.getElementById("toggle-theme");
+  const sync = () => {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    btn.textContent = isLight ? "☀" : "☾";
+    btn.title = isLight ? "Switch to dark mode" : "Switch to light mode";
+  };
+  sync();
+  btn.addEventListener("click", () => {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    if (isLight) { document.documentElement.removeAttribute("data-theme"); localStorage.setItem("poj-theme","dark"); }
+    else { document.documentElement.setAttribute("data-theme","light"); localStorage.setItem("poj-theme","light"); }
+    sync();
+  });
+})();
 
 // Initial settle
 sim.alpha(1).restart();
