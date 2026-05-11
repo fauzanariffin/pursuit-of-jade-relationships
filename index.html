@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pursuit of Jade — Character Map (Ep 1–11)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #07060a;
+    --bg-1: #0e0b0a;
+    --bg-2: #14100c;
+    --ink:  #f3e8cf;
+    --ink-d:#c9b894;
+    --ink-x:#8a7a5e;
+    --ink-xx:#5e503a;
+    --gold: #c9a84c;
+    --gold-l:#ecd388;
+    --gold-d:#8b7330;
+    --jade: #4ea886;
+    --jade-l:#7ed3b2;
+    --red:  #c4392b;
+    --red-l:#e25a4a;
+    --rule: rgba(201,168,76,.18);
+    --rule-2: rgba(201,168,76,.10);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* atmospheric backdrop */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 50% at 22% 18%, rgba(78,168,134,.10) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 80% 80%, rgba(196,57,43,.10) 0%, transparent 62%),
+      radial-gradient(ellipse 90% 70% at 50% 50%, rgba(201,168,76,.04) 0%, transparent 70%);
+  }
+  body::after {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+    background-image:
+      radial-gradient(rgba(201,168,76,.05) 1px, transparent 1px),
+      radial-gradient(rgba(201,168,76,.03) 1px, transparent 1px);
+    background-size: 38px 38px, 19px 19px;
+    background-position: 0 0, 10px 10px;
+    mix-blend-mode: screen;
+  }
+
+  /* ───── Header ──────────────────────────── */
+  header {
+    position:relative; z-index:10; flex-shrink:0;
+    padding: 14px 22px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:18px; flex-wrap:wrap;
+    background: linear-gradient(180deg, rgba(20,16,12,.98), rgba(7,6,10,.92));
+    border-bottom:1px solid var(--rule);
+    box-shadow: 0 1px 0 rgba(255,220,140,.04) inset, 0 18px 36px -28px rgba(0,0,0,.9);
+  }
+  .brand { display:flex; align-items:baseline; gap:14px; flex-shrink:0; }
+  .brand .chi {
+    font-family: 'Noto Serif SC', serif; font-weight:600;
+    font-size: 1.35rem; color: var(--jade-l);
+    letter-spacing:.12em;
+    text-shadow: 0 0 22px rgba(126,211,178,.35);
+  }
+  .brand .latin {
+    font-family:'Cinzel', serif; font-weight:600;
+    font-size: 1rem; letter-spacing:.28em;
+    color: var(--gold-l);
+    text-shadow: 0 0 26px rgba(236,211,136,.35);
+  }
+  .brand .rule { width:1px; height:24px; background: var(--rule); }
+  .brand .sub  {
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    color: var(--ink-x); font-size:.95rem;
+  }
+  .ep-badge {
+    font-family:'Cinzel', serif;
+    font-size:.62rem; letter-spacing:.22em;
+    padding: 4px 10px;
+    color: var(--red-l);
+    border:1px solid rgba(196,57,43,.5);
+    background: rgba(196,57,43,.10);
+    border-radius: 2px;
+  }
+
+  .head-right { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .search {
+    position:relative;
+    display:flex; align-items:center;
+    background: rgba(7,6,10,.7);
+    border:1px solid var(--rule);
+    border-radius: 2px;
+    padding: 6px 10px;
+    transition: border-color .2s;
+    min-width: 240px;
+  }
+  .search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(201,168,76,.18); }
+  .search svg { width:13px; height:13px; color: var(--ink-x); margin-right:8px; flex-shrink:0; }
+  .search input {
+    background:none; border:none; outline:none;
+    color: var(--ink); font-family:'Cormorant Garamond', serif;
+    font-size: .95rem; font-style: italic;
+    width: 100%;
+  }
+  .search input::placeholder { color: var(--ink-xx); font-style:italic; }
+  .search kbd {
+    font-family:'Cinzel', serif; font-size:.58rem; letter-spacing:.1em;
+    color: var(--ink-xx); border:1px solid var(--rule); padding:1px 5px; border-radius:2px;
+  }
+  .search-results {
+    position:absolute; top: calc(100% + 6px); left:0; right:0;
+    background: rgba(14,11,10,.98);
+    border:1px solid var(--rule); border-radius:2px;
+    max-height: 280px; overflow-y:auto;
+    display:none; z-index: 220;
+    box-shadow: 0 14px 40px rgba(0,0,0,.7);
+  }
+  .search-results.open { display:block; }
+  .sr-item {
+    padding: 7px 12px; cursor:pointer;
+    display:flex; align-items:baseline; gap:8px;
+    border-bottom:1px solid var(--rule-2);
+    transition: background .15s;
+  }
+  .sr-item:hover, .sr-item.active { background: rgba(201,168,76,.07); }
+  .sr-item:last-child { border-bottom:none; }
+  .sr-name { font-family:'Cinzel', serif; font-size:.78rem; color: var(--gold-l); }
+  .sr-chi  { font-family:'Noto Serif SC', serif; color: var(--ink-x); font-size:.78rem; letter-spacing:.05em; }
+  .sr-role { color: var(--ink-xx); font-size:.82rem; font-style: italic; margin-left:auto; }
+  .sr-empty { padding: 10px 12px; color: var(--ink-xx); font-style:italic; font-size:.85rem; }
+
+  /* legend */
+  .legend {
+    display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap;
+    padding: 6px 12px;
+    background: rgba(7,6,10,.55);
+    border:1px solid var(--rule-2); border-radius:2px;
+  }
+  .legend-col { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .legend-group { display:flex; align-items:center; gap:5px; font-size:.78rem; color: var(--ink-x); }
+  .ld { width:8px; height:8px; border-radius:50%; }
+  .ll { width:18px; height:2px; border-radius:1px; }
+  .lx { width:18px; border-top:2px dashed; }
+  .legend-sep { width:1px; height:14px; background: var(--rule); }
+
+  /* ───── Main ─────────────────────────────── */
+  main {
+    flex:1; min-height:0; display:flex; position:relative;
+  }
+
+  /* Left rail – character index */
+  #rail {
+    width: 240px; flex-shrink:0; position:relative; z-index:5;
+    display:flex; flex-direction:column;
+    background: linear-gradient(180deg, rgba(14,11,10,.88), rgba(7,6,10,.92));
+    border-right:1px solid var(--rule);
+  }
+  .rail-head {
+    padding: 12px 14px 8px;
+    border-bottom:1px solid var(--rule-2);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .rail-title {
+    font-family:'Cinzel', serif; font-size:.66rem; letter-spacing:.22em;
+    color: var(--ink-x);
+  }
+  .rail-count { color: var(--gold); font-size:.72rem; font-family:'Cinzel', serif; }
+
+  .filter-pills {
+    padding: 10px 12px; display:flex; flex-wrap:wrap; gap:5px;
+    border-bottom:1px solid var(--rule-2);
+  }
+  .filter-pill {
+    font-family:'Cinzel', serif; font-size:.58rem; letter-spacing:.12em;
+    padding: 4px 9px; border-radius:20px;
+    background: rgba(7,6,10,.6); border:1px solid var(--rule);
+    color: var(--ink-x); cursor:pointer; transition: all .18s;
+    text-transform: uppercase;
+  }
+  .filter-pill:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-pill.active { background: rgba(201,168,76,.12); border-color: var(--gold); color: var(--gold-l); }
+  .filter-pill[data-filter="protagonist"].active { background: rgba(78,168,134,.12); border-color: var(--jade); color: var(--jade-l); }
+  .filter-pill[data-filter="antagonist"].active { background: rgba(196,57,43,.12); border-color: var(--red); color: var(--red-l); }
+
+  .ep-block { padding: 10px 12px; border-bottom:1px solid var(--rule-2); }
+  .ep-block .rail-title { padding:0 0 7px; border:none; }
+
+  .char-list { flex:1; overflow-y:auto; padding: 6px 0 10px; }
+  .char-list::-webkit-scrollbar { width:4px; }
+  .char-list::-webkit-scrollbar-thumb { background: var(--rule); border-radius:2px; }
+  .char-group-h {
+    font-family:'Cinzel', serif; font-size:.6rem; letter-spacing:.22em;
+    color: var(--ink-xx); padding: 12px 14px 6px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .char-group-h::after { content:''; flex:1; height:1px; background: var(--rule-2); }
+  .char-row {
+    padding: 6px 14px; cursor:pointer; display:flex; align-items:baseline; gap:8px;
+    transition: background .15s, padding .15s;
+    border-left: 2px solid transparent;
+  }
+  .char-row:hover { background: rgba(201,168,76,.05); border-left-color: var(--gold-d); }
+  .char-row.active { background: rgba(201,168,76,.10); border-left-color: var(--gold); }
+  .char-row.dim { opacity:.32; }
+  .cr-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; transform: translateY(-1px); }
+  .cr-name { font-family:'Cinzel', serif; font-size:.72rem; color: var(--ink); line-height:1.25; }
+  .cr-chi  { font-family:'Noto Serif SC', serif; font-size:.7rem; color: var(--ink-xx); margin-left:auto; letter-spacing:.05em; }
+
+  /* Canvas */
+  #stage { flex:1; position:relative; min-width:0; }
+  svg#graph { width:100%; height:100%; cursor:grab; display:block; }
+  svg#graph:active { cursor:grabbing; }
+
+  /* faction halos */
+  .halo-label {
+    font-family:'Cinzel', serif; font-size: 11px; letter-spacing:.32em;
+    fill: var(--ink-xx); text-anchor:middle; pointer-events:none;
+    text-transform: uppercase;
+  }
+  .halo-chi {
+    font-family:'Noto Serif SC', serif; font-size: 13px;
+    fill: var(--ink-xx); text-anchor:middle; pointer-events:none;
+    letter-spacing:.18em; opacity:.6;
+  }
+
+  /* links */
+  .link { fill:none; transition: stroke-opacity .22s, stroke-width .22s; }
+  .link.dimmed { stroke-opacity: .04 !important; }
+  .link.highlighted { stroke-opacity: 1 !important; stroke-width: 2.6 !important; filter: drop-shadow(0 0 4px currentColor); }
+  .link-label {
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size: 10px; fill: var(--ink-x);
+    text-anchor:middle; pointer-events:none;
+    opacity: 0; transition: opacity .2s;
+  }
+  .link-label.shown { opacity:.92; }
+  .link-label-bg {
+    fill: var(--bg-0); opacity:.65;
+  }
+
+  /* nodes */
+  .node-group { cursor:pointer; }
+  .node-outer { fill:none; transition: all .22s; }
+  .node-inner { transition: all .22s; }
+  .node-icon, .node-name, .node-sub, .node-ep { pointer-events:none; }
+  .node-icon { text-anchor:middle; dominant-baseline:central; }
+  .node-name {
+    font-family:'Cinzel', serif; fill: var(--gold-l);
+    text-anchor:middle; font-weight:600; letter-spacing:.04em;
+  }
+  .node-sub {
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    fill: var(--ink-x); text-anchor:middle;
+  }
+  .node-ep {
+    font-family:'Cinzel', serif; fill: rgba(196,57,43,.85);
+    text-anchor:middle; letter-spacing:.1em;
+  }
+  .node-group.dimmed { opacity: .12; }
+  .node-group.selected .node-outer { stroke-width:3.2 !important; filter: drop-shadow(0 0 10px currentColor); }
+  .node-group.match-glow .node-outer { stroke-width: 2.6 !important; }
+
+  /* Detail Panel */
+  #detail-panel {
+    position:absolute; right: 16px; top: 16px; width: 320px;
+    background: linear-gradient(160deg, rgba(20,16,12,.98), rgba(10,8,7,.98));
+    border:1px solid var(--rule);
+    border-radius: 3px;
+    display:none; z-index:100;
+    box-shadow: 0 18px 50px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,220,140,.05);
+    max-height: calc(100% - 32px);
+    overflow:hidden;
+    flex-direction:column;
+  }
+  #detail-panel.visible { display:flex; animation: panelIn .26s cubic-bezier(.2,.7,.3,1); }
+  @keyframes panelIn { from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:translateY(0)} }
+  #detail-panel .scroll {
+    overflow-y:auto; flex:1;
+  }
+  #detail-panel .scroll::-webkit-scrollbar { width:4px; }
+  #detail-panel .scroll::-webkit-scrollbar-thumb { background: var(--rule); border-radius:2px; }
+
+  .panel-hero {
+    position:relative;
+    padding: 16px 18px 14px 22px;
+    border-bottom:1px solid var(--rule-2);
+  }
+  .panel-faction-bar {
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+  }
+  .panel-name {
+    font-family:'Cinzel', serif; font-weight:700;
+    font-size: 1.18rem; color: var(--gold-l);
+    line-height:1.15; padding-right:22px;
+    letter-spacing:.03em;
+  }
+  .panel-chinese {
+    font-family:'Noto Serif SC', serif;
+    font-size: .92rem; color: var(--ink-d);
+    margin-top: 3px; letter-spacing:.1em;
+  }
+  .panel-meta {
+    margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .meta-tag {
+    font-family:'Cinzel', serif; font-size:.58rem; letter-spacing:.16em;
+    padding: 2px 7px; border-radius:2px;
+    text-transform: uppercase;
+  }
+  .meta-faction { color: var(--ink-d); border:1px solid var(--rule); background: rgba(201,168,76,.06); }
+  .meta-ep      { color: var(--red-l); border:1px solid rgba(196,57,43,.4); background: rgba(196,57,43,.08); }
+
+  .panel-aliases { margin-top:8px; display:flex; flex-wrap:wrap; gap:4px; }
+  .alias-chip {
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size:.78rem; color: var(--ink-d);
+    padding: 2px 7px; border-radius:2px;
+    background: rgba(201,168,76,.07); border:1px solid var(--rule-2);
+  }
+
+  .panel-body { padding: 14px 18px 12px; border-bottom:1px solid var(--rule-2); }
+  .panel-role {
+    font-family:'Cinzel', serif; font-size:.7rem; letter-spacing:.14em;
+    color: var(--jade-l); text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .panel-desc {
+    font-family:'Cormorant Garamond', serif; font-size:1.02rem;
+    color: var(--ink); line-height: 1.5;
+  }
+  .panel-actor {
+    margin-top: 10px;
+    font-family:'Cormorant Garamond', serif; font-size:.88rem;
+    color: var(--ink-x); font-style:italic;
+  }
+  .panel-actor span { color: var(--ink-d); font-style:normal; }
+
+  .panel-connections { padding: 12px 18px 16px; }
+  .conn-title {
+    font-family:'Cinzel', serif; font-size:.62rem; letter-spacing:.22em;
+    color: var(--ink-x); text-transform:uppercase;
+    margin-bottom: 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .conn-title::after { content:''; flex:1; height:1px; background: var(--rule-2); }
+  .conn-count {
+    font-family:'Cinzel', serif; color: var(--gold);
+  }
+  .conn-group {
+    margin-bottom: 12px;
+  }
+  .conn-group:last-child { margin-bottom:0; }
+  .conn-group-h {
+    font-family:'Cinzel', serif; font-size:.58rem; letter-spacing:.14em;
+    color: var(--ink-xx); text-transform: uppercase;
+    margin-bottom: 5px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .conn-group-h .swatch { width:14px; height:2px; border-radius:1px; }
+  .conn-item {
+    display:flex; align-items:flex-start; gap: 9px;
+    padding: 5px 6px 5px 6px; border-radius:2px;
+    cursor:pointer; transition: background .15s;
+    margin: 1px 0;
+  }
+  .conn-item:hover { background: rgba(201,168,76,.06); }
+  .conn-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+  .conn-text {
+    color: var(--ink-x); font-size:.92rem; line-height:1.35;
+    font-family:'Cormorant Garamond', serif;
+  }
+  .conn-name {
+    color: var(--ink); font-weight:600; font-family:'Cinzel', serif;
+    font-size:.78rem; letter-spacing:.03em;
+  }
+  .conn-rel { font-style:italic; color: var(--ink-x); }
+
+  #close-panel {
+    position:absolute; top:10px; right:10px;
+    background:none; border:none; color: var(--ink-x);
+    font-size:1.1rem; cursor:pointer; padding: 4px 6px;
+    border-radius:2px; transition: all .18s;
+    line-height: 1;
+  }
+  #close-panel:hover { color: var(--gold-l); background: rgba(201,168,76,.08); }
+
+  /* Controls */
+  #controls {
+    position:absolute; left:14px; bottom:14px;
+    display:flex; flex-direction:column; gap:6px; z-index:90;
+  }
+  .ctrl-btn {
+    background: rgba(14,11,10,.92);
+    border:1px solid var(--rule);
+    color: var(--gold);
+    width: 32px; height: 32px;
+    border-radius: 2px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel', serif; font-size: .95rem;
+    transition: all .18s;
+  }
+  .ctrl-btn:hover { border-color: var(--gold); background: rgba(201,168,76,.10); color: var(--gold-l); }
+  .ctrl-btn[data-toggle].on { background: rgba(201,168,76,.16); border-color: var(--gold); color: var(--gold-l); }
+
+  #scale-indicator {
+    position:absolute; left: 54px; bottom: 14px; z-index:90;
+    font-family:'Cinzel', serif; font-size:.62rem; letter-spacing:.18em;
+    color: var(--ink-xx); padding: 4px 0;
+  }
+
+  #hint {
+    position:absolute; left:50%; bottom: 12px; transform:translateX(-50%);
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    color: var(--ink-xx); font-size:.92rem;
+    pointer-events:none; z-index:80;
+    text-shadow: 0 0 8px rgba(0,0,0,.8);
+  }
+
+  #tooltip {
+    position:absolute; pointer-events:none; display:none;
+    background: rgba(14,11,10,.96);
+    border:1px solid var(--rule);
+    border-radius: 2px;
+    padding: 8px 12px;
+    font-family:'Cormorant Garamond', serif;
+    color: var(--ink); font-size:.92rem;
+    max-width: 220px;
+    z-index: 200;
+    box-shadow: 0 10px 24px rgba(0,0,0,.5);
+  }
+  #tooltip strong {
+    font-family:'Cinzel', serif; font-weight:600;
+    font-size:.82rem; color: var(--gold-l);
+    letter-spacing:.04em;
+    display:block; margin-bottom: 2px;
+  }
+  #tooltip em {
+    color: var(--ink-x); font-size:.84rem;
+  }
+  #tooltip .tip-chi {
+    font-family:'Noto Serif SC', serif; color: var(--ink-x);
+    font-size:.8rem; margin-bottom:4px;
+  }
+
+  /* responsive */
+  @media (max-width: 1000px) {
+    #rail { width: 200px; }
+    #detail-panel { width: 280px; }
+    .legend { display:none; }
+  }
+  @media (max-width: 720px) {
+    #rail { display:none; }
+    .head-right .search { min-width: 0; flex:1; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="chi">逐玉</span>
+    <span class="latin">Pursuit&nbsp;of&nbsp;Jade</span>
+    <span class="rule"></span>
+    <span class="sub">A character relationship map</span>
+    <span class="ep-badge">EP 1 — 11</span>
+  </div>
+
+  <div class="head-right">
+    <div class="legend">
+      <div class="legend-col">
+        <div class="legend-group"><div class="ld" style="background:#7ed3b2"></div><span>Protagonist</span></div>
+        <div class="legend-group"><div class="ld" style="background:#ecd388"></div><span>Neutral / Ally</span></div>
+        <div class="legend-group"><div class="ld" style="background:#e25a4a"></div><span>Antagonist</span></div>
+        <div class="legend-group"><div class="ld" style="background:#999"></div><span>Minor</span></div>
+        <div class="legend-group"><div class="ld" style="background:#7a6a55"></div><span>Deceased</span></div>
+      </div>
+      <div class="legend-sep"></div>
+      <div class="legend-col">
+        <div class="legend-group"><div class="ll" style="background:#ff6b9d"></div><span>Love</span></div>
+        <div class="legend-group"><div class="ll" style="background:#ffd700"></div><span>Family</span></div>
+        <div class="legend-group"><div class="ll" style="background:#4ecdc4"></div><span>Friend</span></div>
+        <div class="legend-group"><div class="ll" style="background:#87ceeb"></div><span>Ally</span></div>
+        <div class="legend-group"><div class="ll" style="background:#ff2222"></div><span>Enemy</span></div>
+        <div class="legend-group"><div class="lx" style="border-color:#ff8c00"></div><span>Conflict</span></div>
+        <div class="legend-group"><div class="lx" style="border-color:#cc88ff"></div><span>Yearning</span></div>
+      </div>
+    </div>
+
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search-input" type="text" placeholder="Search name, alias, role…" autocomplete="off" />
+      <kbd>⌘K</kbd>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <aside id="rail">
+    <div class="rail-head">
+      <div class="rail-title">Dramatis Personae</div>
+      <div class="rail-count" id="rail-count">32</div>
+    </div>
+
+    <div class="filter-pills" id="faction-filters">
+      <div class="filter-pill active" data-filter="all">All</div>
+      <div class="filter-pill" data-filter="protagonist">Leads</div>
+      <div class="filter-pill" data-filter="neutral">Allies</div>
+      <div class="filter-pill" data-filter="antagonist">Foes</div>
+      <div class="filter-pill" data-filter="minor">Minor</div>
+      <div class="filter-pill" data-filter="deceased">Past</div>
+    </div>
+
+    <div class="ep-block">
+      <div class="rail-title">By Debut Episode</div>
+      <div class="filter-pills" style="padding:7px 0 0; border:none;" id="ep-filters">
+        <div class="filter-pill" data-ep="1">Ep 1 – 6</div>
+        <div class="filter-pill" data-ep="7">Ep 7 – 9</div>
+        <div class="filter-pill" data-ep="10">Ep 10 – 11</div>
+      </div>
+    </div>
+
+    <div class="char-list" id="char-list"></div>
+  </aside>
+
+  <div id="stage">
+    <svg id="graph"></svg>
+
+    <div id="controls">
+      <button class="ctrl-btn" id="zoom-in"   title="Zoom in">＋</button>
+      <button class="ctrl-btn" id="zoom-out"  title="Zoom out">－</button>
+      <button class="ctrl-btn" id="zoom-reset" title="Recenter">⊙</button>
+      <button class="ctrl-btn" data-toggle="labels" id="toggle-labels" title="Toggle link labels">A</button>
+    </div>
+    <div id="scale-indicator">100%</div>
+
+    <div id="hint">Click a character · Drag to pan · Scroll to zoom</div>
+    <div id="tooltip"></div>
+
+    <div id="detail-panel">
+      <div class="panel-hero">
+        <div class="panel-faction-bar" id="panel-bar"></div>
+        <button id="close-panel" aria-label="Close">✕</button>
+        <div class="panel-name" id="panel-name"></div>
+        <div class="panel-chinese" id="panel-chinese"></div>
+        <div class="panel-meta">
+          <span class="meta-tag meta-faction" id="panel-faction"></span>
+          <span class="meta-tag meta-ep" id="panel-ep"></span>
+        </div>
+        <div class="panel-aliases" id="panel-aliases"></div>
+      </div>
+      <div class="scroll">
+        <div class="panel-body">
+          <div class="panel-role" id="panel-role"></div>
+          <div class="panel-desc" id="panel-desc"></div>
+          <div class="panel-actor" id="panel-actor"></div>
+        </div>
+        <div class="panel-connections">
+          <div class="conn-title">
+            <span>Connections, Ep 1–11</span>
+            <span class="conn-count" id="conn-count"></span>
+          </div>
+          <div id="panel-connections"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════════
+const characters = [
+  // ── PROTAGONISTS
+  { id:"changyu",      name:"Fan Chang Yu",       chinese:"范昌玉",    aliases:[],
+    role:"Female Lead",
+    desc:"Orphaned butcher's daughter raising her younger sister alone. Fearless, skilled with a cleaver and her father's pole technique. Saves a half-dead stranger in a snowstorm — who turns out to be the missing Marquis of Wu'an. Their marriage of convenience slowly becomes real. Targeted by the Wei faction over a hidden letter in her home.",
+    actor:"Tian Xi Wei", group:"protagonist", ep:1, glyph:"⚔", sz:"L" },
+  { id:"xiezheng",     name:"Xie Zheng",          chinese:"谢铮",      aliases:["alias: Yan Zheng","Marquis of Wu'an","courtesy: Jiuheng"],
+    role:"Male Lead · Fallen Marquis of Wu'an",
+    desc:"Rightful Marquis of Wu'an, living undercover as 'Yan Zheng' to evade Chancellor Wei's assassins. His entire family was killed 17 years ago in a political massacre. Came to Lin'an to investigate but was ambushed and nearly died before Changyu found him. Slowly, against all his plans, he falls for his butcher wife. Commands a loyal Black Robed Cavalry Guard and sends orders via a gyrfalcon.",
+    actor:"Zhang Ling He", group:"protagonist", ep:1, glyph:"⟁", sz:"L" },
+  { id:"changning",    name:"Fan Chang Ning",     chinese:"范昌宁",    aliases:[],
+    role:"Chang Yu's Younger Sister",
+    desc:"Fan Chang Yu's cheerful, perceptive younger sister. Suffers asthma attacks when frightened. Both Fan sisters are targeted by Chancellor Wei for a letter believed hidden in their family home. Quickly becomes fond of Yan Zheng.",
+    actor:"", group:"protagonist", ep:1, glyph:"❀", sz:"S" },
+  { id:"gongsunyin",   name:"Gongsun Yin",        chinese:"公孙胤",    aliases:[],
+    role:"Xie Zheng's Best Friend · Headmaster, Luyuan Academy",
+    desc:"Xie Zheng's closest friend and trusted military advisor. Headmaster of the prestigious Luyuan Academy — a name so powerful it immediately cows Magistrate Cui into releasing Xie Zheng. They communicate via secret messenger birds. Arrives in ep 7 to rescue Xie Zheng from jail. Unknowingly the target of Princess Qi Shu's secret affections.",
+    actor:"Li Qing", group:"protagonist", ep:7, glyph:"𓅂", sz:"M" },
+
+  // ── NEUTRAL / ALLIES
+  { id:"lihuaian",     name:"Li Huai An",         chinese:"李怀安",    aliases:["alias: Wen Kan","Commandant of Jizhou"],
+    role:"Commandant of Jizhou · Grand Tutor's Grandson",
+    desc:"Grand Tutor Li's eldest grandson and Xie Zheng's childhood peer — both trained under General He. Officially aligned with General He of the Wei faction, but his true loyalty is to Great Yin and its people. Secretly dispatched to Lin'an to protect the Fan sisters. Moves in across the street from Changyu in ep 10. Xie Zheng confronts him directly about whose side he is on. A likely love rival.",
+    actor:"Ren Hao", group:"neutral", ep:9, glyph:"⚖", sz:"M" },
+  { id:"yuqianqian",   name:"Yu Qian Qian",       chinese:"余倩倩",    aliases:[],
+    role:"Owner of Yixiang Restaurant",
+    desc:"Beautiful and shrewd restaurateur who built Yixiang from nothing after arriving in Lin'an pregnant and alone. Befriends Changyu and hires her to supply braised meat. Being relentlessly pursued by Qi Min who suspects her son Baoer is his. In ep 10, she and Changyu are ambushed by Guo Dali — saved by Xie Zheng. Is planning a countermove against Qi Min.",
+    actor:"Snow Kong", group:"neutral", ep:8, glyph:"⛯", sz:"M" },
+  { id:"baoer",        name:"Baoer",              chinese:"宝儿",      aliases:[],
+    role:"Yu Qianqian's Son",
+    desc:"Yu Qianqian's young son. His birth date (9th day of the 8th month, Dingchou year) was secretly confirmed by Qi Min's men, cementing Qi Min's belief that Baoer is his biological child — putting mother and son in serious danger.",
+    actor:"", group:"neutral", ep:9, glyph:"☘", sz:"S" },
+  { id:"mrszao",       name:"Mr. & Mrs. Zhao",    chinese:"赵老夫妇",  aliases:[],
+    role:"Neighbors · Landlords",
+    desc:"The warm, shamelessly nosy elderly couple next door. Mr. Zhao is also the local doctor. They adore Changyu and Yan Zheng and meddle constantly to make the fake marriage real — including deliberately washing their bedding so Changyu has nowhere to sleep but beside her husband. Their silhouettes eavesdropping in ep 9 are legendary.",
+    actor:"", group:"neutral", ep:1, glyph:"⌂", sz:"S" },
+  { id:"constablewang",name:"Constable Wang",     chinese:"王捕头",    aliases:[],
+    role:"Local Constable",
+    desc:"Lin'an's generally fair-minded constable, despite serving under the corrupt Magistrate Cui. Relays information to Changyu during both arrest incidents, and helped keep order when thugs invaded her home. Walks a careful line between doing his job and being decent.",
+    actor:"", group:"neutral", ep:2, glyph:"✦", sz:"S" },
+  { id:"grandtutorli", name:"Grand Tutor Li",     chinese:"李太傅",    aliases:["Li Jing / Li Xing"],
+    role:"Imperial Grand Tutor · Li Faction Leader",
+    desc:"Li Huai An's grandfather and head of the Li court faction opposing Chancellor Wei. Married his daughter to Emperor Qi Sheng (she is the Empress, kept childless by court design to balance power). Publicly backs Xie Zheng's honour at court in ep 10. Both factions are secretly searching for the missing Marquis.",
+    actor:"Wang Jiu Sheng", group:"neutral", ep:3, glyph:"卷", sz:"S" },
+  { id:"hejingyuan",   name:"Gen. He Jingyuan",   chinese:"何景远将军",aliases:[],
+    role:"Prefect of Jizhou · Mentor to Xie Zheng & Li Huai An",
+    desc:"Veteran general and mentor to both Xie Zheng and Li Huai An. Was also a close friend of the Fan sisters' late father, Wei Qilin. In ep 9–10, he uses a Tiger Seal and military documents from 16 years ago to coerce Chancellor Wei into stopping his attacks on the Fan sisters. Asks Li Huai An to promise to protect the girls should he die.",
+    actor:"Lu Yong", group:"neutral", ep:9, glyph:"虎", sz:"S" },
+  { id:"qishu",        name:"Princess Qi Shu",    chinese:"齐姝公主",  aliases:[],
+    role:"Princess Royal",
+    desc:"A princess who secretly harbours deep feelings for Gongsun Yin. In ep 11, her mother Consort Dowager An forces her to attend the Lantern Festival with Li Huai An instead — citing imperial regulations and family prestige. Left devastated. A three-way romantic tension between her, Gongsun Yin, and Li Huai An is forming.",
+    actor:"Yu Zhong Li", group:"neutral", ep:11, glyph:"❖", sz:"S" },
+  { id:"emperorqisheng",name:"Emperor Qi Sheng",  chinese:"齐圣皇帝",  aliases:[],
+    role:"Emperor of Great Yin",
+    desc:"The Emperor, who appears in court scenes in ep 10. Largely a figurehead — real power is held by Chancellor Wei. He expresses genuine grief at news of Xie Zheng's supposed death and proposes posthumously honouring him with a duke's title, but Wei Yan overrules him in open court.",
+    actor:"", group:"neutral", ep:10, glyph:"龍", sz:"S" },
+  { id:"tangpeiyi",    name:"Tang Pei Yi",        chinese:"唐培义",    aliases:[],
+    role:"He Jingyuan's Subordinate Officer",
+    desc:"General He Jingyuan's trusted subordinate, stationed in Jizhou.",
+    actor:"Chen Yu Ming", group:"neutral", ep:10, glyph:"刀", sz:"S" },
+  { id:"zhuoran",      name:"Zhuo Ran",           chinese:"卓然",      aliases:[],
+    role:"Li Huai An's Subordinate",
+    desc:"Li Huai An's loyal right-hand man who accompanies him to Lin'an.",
+    actor:"Han Hao Tian", group:"neutral", ep:9, glyph:"刀", sz:"S" },
+
+  // ── ANTAGONISTS
+  { id:"chancellorwei",name:"Chancellor Wei",     chinese:"魏相",      aliases:["Wei Yan","Prime Minister"],
+    role:"Prime Minister · Main Antagonist",
+    desc:"The all-powerful Prime Minister and the real power behind the Emperor. Engineered the Jizhou massacre 17 years ago that killed Xie Zheng's father. Commands the Iron Suicide Warriors. His wife's congratulatory reaction upon hearing Xie Zheng is alive hints he may secretly know Xie Zheng is his nephew. Attends court while ill in ep 10 to oppose public mourning for Xie Zheng, fearing it would embolden enemies.",
+    actor:"", group:"antagonist", ep:3, glyph:"👁", sz:"M" },
+  { id:"weixuan",      name:"Wei Xuan",           chinese:"魏宣",      aliases:[],
+    role:"Wei Yan's Son · Wei Faction Military",
+    desc:"Chancellor Wei's arrogant, reckless son. Forcibly seized grain from Jizhou civilians, provoking unrest. Had General He arrested when He tried to stop him. Xie Zheng deduces (ep 10) that Wei Xuan's grain seizures are a clumsy trap designed to bait Prince Changxin's rebels — a plan Wei Xuan doesn't even fully understand.",
+    actor:"", group:"antagonist", ep:9, glyph:"⚡", sz:"S" },
+  { id:"qimin",        name:"Qi Min",             chinese:"齐敏",      aliases:["true: Sui Yuanhuai","Prince Changxin's son"],
+    role:"'Rice Merchant' (cover) · Rebel Prince",
+    desc:"Introduced as a wealthy rice merchant pursuing Yu Qianqian. His true identity is Sui Yuanhuai — elder son of the rebel Prince Changxin of Chongzhou. As a child, he stood in for the eldest prince and had half his face burned. His silver-haired menace is noted by everyone. Suspects Baoer is his son. May try to use Xie Zheng to eliminate his rival brother Sui Yuanqing.",
+    actor:"Deng Kai", group:"antagonist", ep:9, glyph:"☾", sz:"M" },
+  { id:"magistratecui",name:"Magistrate Cui",     chinese:"崔知县",    aliases:[],
+    role:"Local Magistrate · Corrupt",
+    desc:"Lin'an's corrupt magistrate. Detains Changyu without proper evidence; issues Xie Zheng an arrest warrant and orders 20 lashes to force a confession — despite obvious inconsistencies. Immediately reverses course when Gongsun Yin invokes Luyuan Academy credentials. Also tries to arrest Changyu in ep 9 for an illegal memorial tablet.",
+    actor:"", group:"antagonist", ep:6, glyph:"印", sz:"S" },
+  { id:"guodali",      name:"Guo Da Li",          chinese:"郭大力",    aliases:[],
+    role:"Rival Butcher · Local Antagonist",
+    desc:"A rival butcher who resents Changyu's braised meat business. In ep 2 he accuses her of breaking trade rules at the market. In ep 10, he ambushes Changyu and Qianqian after dark using a knockout powder, hired to sabotage the braised meat business. Xie Zheng subdues him and drags him behind a carriage.",
+    actor:"", group:"antagonist", ep:2, glyph:"✶", sz:"S" },
+  { id:"zhaoxun",      name:"Zhao Xun",           chinese:"赵荀",      aliases:[],
+    role:"Lin'an Rice Shop Manager · Qi Min's Agent",
+    desc:"Manager of the Lin'an Rice Shop and Qi Min's local informant-agent. In ep 10, he visits Yixiang Restaurant to introduce Qi Min to Yu Qianqian under the pretence of a business opportunity — in reality scouting her on behalf of Qi Min. Son of Nanny Lan.",
+    actor:"Guan Zi Jing", group:"antagonist", ep:10, glyph:"禾", sz:"S" },
+
+  // ── MINOR / BACKGROUND
+  { id:"songyue",      name:"Mrs. Song",          chinese:"宋夫人",    aliases:[],
+    role:"Song Yan's Mother · Social Bully",
+    desc:"Song Yan's snobbish mother who orchestrated the broken engagement with Changyu using a fortune teller's excuse. In ep 10, she hosts a lavish lunch at Yixiang Restaurant to boast about Song Yan's new socially elevated fiancée. Spots Changyu working there and publicly mocks her as an inferior. When Qianqian defends Changyu, Song's bullying turns to Qianqian's status as an 'unwed mother'.",
+    actor:"", group:"minor", ep:1, glyph:"扇", sz:"S" },
+  { id:"songyan",      name:"Song Yan",           chinese:"宋燕",      aliases:[],
+    role:"Chang Yu's Ex-Fiancé",
+    desc:"Changyu's former fiancé whose family called off their engagement after labelling her a 'star of ill omen'. He hides behind filial piety while his mother does the dirty work. Changyu's family had funded his education for years. She confronts them and refuses to return the engagement letter without reimbursement.",
+    actor:"", group:"minor", ep:1, glyph:"書", sz:"S" },
+  { id:"fandaniu",     name:"Fan Da Niu",         chinese:"范大牛",    aliases:["uncle"],
+    role:"Chang Yu's Uncle · Gambling Addict · Deceased",
+    desc:"Changyu's paternal uncle. A gambling addict who brought debt-collector thugs to her home in ep 2 to seize the house deed. Found dead in ep 6–7. His wife accuses Changyu of killing him, but the wound is inconsistent with Changyu's knives — a setup by the Wei faction.",
+    actor:"", group:"minor", ep:2, glyph:"骰", sz:"S" },
+  { id:"madamkang",    name:"Madam Kang",         chinese:"康氏",      aliases:[],
+    role:"Town Gossip",
+    desc:"A local gossip who publicly slanders Changyu in ep 1, calling her a 'star of ill omen' and insulting her late mother. Changyu responds by splashing a bucket of pig blood on her — one of the show's most satisfying opening moments.",
+    actor:"", group:"minor", ep:1, glyph:"舌", sz:"S" },
+  { id:"jinyuanbao",   name:"Jin Yuan Bao",       chinese:"金元宝",    aliases:[],
+    role:"Debt Collector / Thug",
+    desc:"Thug leader of the gambling den enforcers who invade Changyu's home in ep 2 at Uncle Fan Da Niu's behest. Changyu fights off his crew with her pole; Xie Zheng takes him down from an upstairs window with a precisely flicked chopstick.",
+    actor:"", group:"minor", ep:2, glyph:"拳", sz:"S" },
+  { id:"madamewei",    name:"Madame Wei",         chinese:"魏夫人",    aliases:[],
+    role:"Chancellor Wei's Wife",
+    desc:"Chancellor Wei's wife, who appears in ep 10. Notably, she congratulates her husband upon hearing that Xie Zheng is alive — a strange reaction suggesting she may know the full truth of Wei Yan's complicated relationship to the Xie family (possibly that Xie Zheng is Wei Yan's nephew).",
+    actor:"", group:"minor", ep:10, glyph:"竹", sz:"S" },
+  { id:"antaifei",     name:"Consort Dowager An", chinese:"安太妃",    aliases:["An Taifei"],
+    role:"Princess Qi Shu's Mother · Imperial Consort",
+    desc:"Princess Qi Shu's mother. An imperial consort who is fully aware of Qi Shu's feelings for Gongsun Yin but dismisses them outright, forcibly sending Qi Shu to attend the Lantern Festival with Li Huai An in ep 11. Places imperial politics and family glory above her daughter's heart.",
+    actor:"", group:"minor", ep:11, glyph:"⌬", sz:"S" },
+  { id:"masterguo",    name:"Master Guo",         chinese:"郭先生",    aliases:[],
+    role:"Magistrate Cui's Assistant",
+    desc:"Magistrate Cui's scheming assistant who conspires with the magistrate during the arrests of Changyu and Yan Zheng (ep 6–9).",
+    actor:"", group:"minor", ep:6, glyph:"筆", sz:"S" },
+
+  // ── DECEASED
+  { id:"weiqilin",     name:"Wei Qilin",          chinese:"魏奇霖",    aliases:["a.k.a. Fan Er Niu","Changyu's father"],
+    role:"Fan Sisters' Father · Former Tiger General · Deceased",
+    desc:"Changyu and Changning's late father, known locally as 'Fan Er Niu' in Lin'an. A former Tiger General and escort, and old friend of General He Jingyuan. In the deep backstory: Chancellor Wei used him to deliver a Tiger Tally and letter ordering General Meng to abandon grain supply routes — an act that led to the Jinzhou massacre and Xie Zheng's father's death. Wei Yan later had Wei Qilin killed to eliminate the witness.",
+    actor:"Kou Zhan Wen", group:"deceased", ep:2, glyph:"†", sz:"S" },
+  { id:"xielinshan",   name:"Xie Lin Shan",       chinese:"谢林山",    aliases:[],
+    role:"Xie Zheng's Father · Deceased",
+    desc:"Xie Zheng's late father who died in the Jizhou massacre 17 years ago alongside the Crown Prince. Appears in flashbacks from ep 7. His death — framed as a military failure but actually a political assassination engineered by Chancellor Wei — is the blood feud at the heart of the entire story.",
+    actor:"", group:"deceased", ep:7, glyph:"†", sz:"S" },
+];
+
+const charMap = Object.fromEntries(characters.map(c => [c.id, c]));
+
+const links = [
+  // Love / Marriage
+  { source:"changyu",      target:"xiezheng",      type:"love",     label:"Married (fake → real love)",                color:"#ff6b9d", w:2.4, dash:false },
+  // Family
+  { source:"changyu",      target:"changning",     type:"family",   label:"Older sister",                              color:"#ffd700", w:1.8, dash:false },
+  { source:"lihuaian",     target:"grandtutorli",  type:"family",   label:"Grandson",                                  color:"#ffd700", w:1.7, dash:false },
+  { source:"yuqianqian",   target:"baoer",         type:"family",   label:"Mother & son",                              color:"#ffd700", w:1.7, dash:false },
+  { source:"chancellorwei",target:"weixuan",       type:"family",   label:"Father & son",                              color:"#cc5555", w:1.6, dash:false },
+  { source:"songyue",      target:"songyan",       type:"family",   label:"Mother & son",                              color:"#aaaaaa", w:1.4, dash:false },
+  { source:"antaifei",     target:"qishu",         type:"family",   label:"Mother & daughter",                         color:"#ffd700", w:1.6, dash:false },
+  { source:"fandaniu",     target:"changyu",       type:"family",   label:"Uncle (antagonistic)",                      color:"#887744", w:1.3, dash:false },
+  { source:"fandaniu",     target:"changning",     type:"family",   label:"Uncle",                                     color:"#887744", w:1.3, dash:false },
+  { source:"weiqilin",     target:"changyu",       type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
+  { source:"weiqilin",     target:"changning",     type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
+  { source:"xielinshan",   target:"xiezheng",      type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
+  { source:"zhaoxun",      target:"qimin",         type:"family",   label:"Nanny Lan's son / Qi Min's agent",          color:"#cc3300", w:1.2, dash:false },
+  { source:"madamewei",    target:"chancellorwei", type:"family",   label:"Wife",                                      color:"#aa6666", w:1.2, dash:false },
+  // Friend
+  { source:"xiezheng",     target:"gongsunyin",    type:"friend",   label:"Best friends / Advisor",                    color:"#4ecdc4", w:1.8, dash:false },
+  { source:"changyu",      target:"yuqianqian",    type:"friend",   label:"Friends & business partners",               color:"#4ecdc4", w:1.6, dash:false },
+  { source:"changyu",      target:"mrszao",        type:"friend",   label:"Neighbors / Landlords",                     color:"#88cc88", w:1.4, dash:false },
+  { source:"xiezheng",     target:"mrszao",        type:"friend",   label:"Neighbors / Landlords",                     color:"#88cc88", w:1.4, dash:false },
+  { source:"hejingyuan",   target:"weiqilin",      type:"friend",   label:"Old friends",                               color:"#c8b060", w:1.3, dash:true  },
+  // Ally
+  { source:"lihuaian",     target:"changyu",       type:"ally",     label:"Secretly protects (ep 9–)",                 color:"#87ceeb", w:1.5, dash:false },
+  { source:"lihuaian",     target:"changning",     type:"ally",     label:"Secretly protects",                         color:"#87ceeb", w:1.3, dash:false },
+  { source:"lihuaian",     target:"hejingyuan",    type:"ally",     label:"Mentored by / reports to",                  color:"#87ceeb", w:1.4, dash:true  },
+  { source:"xiezheng",     target:"hejingyuan",    type:"ally",     label:"Trained under (mentor)",                    color:"#87ceeb", w:1.3, dash:true  },
+  { source:"tangpeiyi",    target:"hejingyuan",    type:"ally",     label:"Subordinate officer",                       color:"#888888", w:1.1, dash:false },
+  { source:"zhuoran",      target:"lihuaian",      type:"ally",     label:"Loyal subordinate",                         color:"#888888", w:1.1, dash:false },
+  { source:"masterguo",    target:"magistratecui", type:"ally",     label:"Scheming assistant",                        color:"#888888", w:1.1, dash:false },
+  { source:"constablewang",target:"magistratecui", type:"ally",     label:"Reports to (reluctantly)",                  color:"#888888", w:1.1, dash:false },
+  { source:"constablewang",target:"changyu",       type:"ally",     label:"Aids / informs",                            color:"#87ceeb", w:1.3, dash:true  },
+  { source:"grandtutorli", target:"emperorqisheng",type:"ally",     label:"Li faction — opposes Wei at court",         color:"#aaaaaa", w:1.2, dash:true  },
+  { source:"hejingyuan",   target:"chancellorwei", type:"ally",     label:"Uses Tiger Seal to coerce truce",           color:"#ff9944", w:1.3, dash:true  },
+  // Romantic (yearning)
+  { source:"qishu",        target:"gongsunyin",    type:"romantic", label:"Secret romantic feelings",                  color:"#cc88ff", w:1.5, dash:true  },
+  { source:"antaifei",     target:"lihuaian",      type:"romantic", label:"Forces Qi Shu toward him",                  color:"#9966cc", w:1.2, dash:true  },
+  { source:"qimin",        target:"yuqianqian",    type:"romantic", label:"Obsessive pursuit / threat",                color:"#ff8c00", w:1.5, dash:true  },
+  // Enemy
+  { source:"chancellorwei",target:"xiezheng",      type:"enemy",    label:"17-yr blood feud / hunts him",              color:"#ff2222", w:2.0, dash:false },
+  { source:"chancellorwei",target:"changyu",       type:"enemy",    label:"Orders assassination (letter)",             color:"#ff2222", w:1.6, dash:false },
+  { source:"chancellorwei",target:"changning",     type:"enemy",    label:"Orders assassination",                      color:"#ff2222", w:1.4, dash:false },
+  { source:"chancellorwei",target:"xielinshan",    type:"enemy",    label:"Engineered his death",                      color:"#ff2222", w:1.3, dash:true  },
+  { source:"chancellorwei",target:"weiqilin",      type:"enemy",    label:"Ordered his death (cover-up)",              color:"#ff2222", w:1.3, dash:true  },
+  { source:"weixuan",      target:"hejingyuan",    type:"enemy",    label:"Had him arrested on false charges",         color:"#ff6600", w:1.4, dash:false },
+  { source:"qimin",        target:"baoer",         type:"enemy",    label:"Claims paternity (threat)",                 color:"#ffaa44", w:1.3, dash:true  },
+  { source:"emperorqisheng",target:"chancellorwei",type:"enemy",    label:"Figurehead — Wei holds real power",         color:"#aa4444", w:1.2, dash:true  },
+  // Conflict
+  { source:"magistratecui",target:"changyu",       type:"conflict", label:"Unjustly detains",                          color:"#ff8c00", w:1.2, dash:true  },
+  { source:"magistratecui",target:"xiezheng",      type:"conflict", label:"Issues arrest warrant",                     color:"#ff8c00", w:1.2, dash:true  },
+  { source:"guodali",      target:"changyu",       type:"conflict", label:"Rival / ambushes (ep 10)",                  color:"#ff6600", w:1.2, dash:true  },
+  { source:"guodali",      target:"yuqianqian",    type:"conflict", label:"Also ambushes Qianqian",                    color:"#ff6600", w:1.1, dash:true  },
+  { source:"songyue",      target:"changyu",       type:"conflict", label:"Social bullying (ep 10)",                   color:"#888888", w:1.1, dash:true  },
+  { source:"songyue",      target:"yuqianqian",    type:"conflict", label:"Bullies at restaurant",                     color:"#888888", w:1.1, dash:true  },
+  { source:"songyan",      target:"changyu",       type:"conflict", label:"Broke engagement / ingrate",                color:"#888888", w:1.1, dash:true  },
+  { source:"fandaniu",     target:"changyu",       type:"conflict", label:"Tried to steal house deed",                 color:"#887744", w:1.1, dash:true  },
+  { source:"jinyuanbao",   target:"changyu",       type:"conflict", label:"Thug sent by uncle",                        color:"#888888", w:1.0, dash:true  },
+  { source:"madamkang",    target:"changyu",       type:"conflict", label:"Public slander (ep 1)",                     color:"#888888", w:1.0, dash:true  },
+  { source:"zhaoxun",      target:"yuqianqian",    type:"conflict", label:"Introduced Qi Min to her",                  color:"#ff8c00", w:1.1, dash:true  },
+];
+
+// Type → human label / order
+const TYPE_META = {
+  love:    { label:"Love & Marriage", swatch:"#ff6b9d", order:0 },
+  family:  { label:"Family",          swatch:"#ffd700", order:1 },
+  friend:  { label:"Friendship",      swatch:"#4ecdc4", order:2 },
+  ally:    { label:"Alliance",        swatch:"#87ceeb", order:3 },
+  romantic:{ label:"Yearning",        swatch:"#cc88ff", order:4 },
+  enemy:   { label:"Enmity",          swatch:"#ff2222", order:5 },
+  conflict:{ label:"Conflict",        swatch:"#ff8c00", order:6 },
+};
+
+const GROUP_META = {
+  protagonist: { label:"Protagonists",        chi:"主角",   color:"#4ea886", colorL:"#7ed3b2" },
+  neutral:     { label:"Neutral & Allies",    chi:"友盟",   color:"#c9a84c", colorL:"#ecd388" },
+  antagonist:  { label:"Antagonists",         chi:"对头",   color:"#c4392b", colorL:"#e25a4a" },
+  minor:       { label:"Minor Characters",    chi:"配角",   color:"#777777", colorL:"#aaaaaa" },
+  deceased:    { label:"Deceased & Flashback",chi:"故人",   color:"#5a4a3a", colorL:"#8a7a6a" },
+};
+
+// ═══════════════════════ GRAPH ══════════════════════════
+const stage = document.getElementById("stage");
+const svg = d3.select("#graph");
+let W = stage.clientWidth, H = stage.clientHeight;
+
+const root = svg.append("g");
+const gBg = root.append("g").attr("class","layer-bg");
+const gHalo = root.append("g").attr("class","layer-halo");
+const gLink = root.append("g").attr("class","layer-link");
+const gLbl  = root.append("g").attr("class","layer-lbl");
+const gNode = root.append("g").attr("class","layer-node");
+
+const zoom = d3.zoom().scaleExtent([0.2, 3]).on("zoom", e => {
+  root.attr("transform", e.transform);
+  document.getElementById("scale-indicator").textContent = Math.round(e.transform.k * 100) + "%";
+});
+svg.call(zoom);
+
+// Arrow markers
+const defs = svg.append("defs");
+[...new Set(links.map(l => l.color))].forEach(color => {
+  const id = "a-" + color.replace("#","");
+  defs.append("marker").attr("id", id).attr("viewBox","0 -4 8 8")
+    .attr("refX", 24).attr("refY", 0)
+    .attr("markerWidth", 5).attr("markerHeight", 5).attr("orient","auto")
+    .append("path").attr("d","M0,-4L8,0L0,4").attr("fill", color).attr("opacity",.72);
+});
+
+// Soft glow filter
+const filter = defs.append("filter").attr("id","soft-glow").attr("x","-50%").attr("y","-50%").attr("width","200%").attr("height","200%");
+filter.append("feGaussianBlur").attr("stdDeviation","3");
+
+const nodeR = d => d.sz === "L" ? 38 : d.sz === "M" ? 30 : 22;
+
+// Pre-position by faction so initial layout converges fast & faction-clustered
+const factionAngles = {
+  protagonist: { cx: .50, cy: .48, r: .00 },        // center
+  neutral:     { cx: .26, cy: .30, r: .30 },        // upper-left
+  antagonist:  { cx: .76, cy: .32, r: .30 },        // upper-right
+  minor:       { cx: .72, cy: .76, r: .30 },        // lower-right
+  deceased:    { cx: .28, cy: .76, r: .30 },        // lower-left
+};
+
+function seedPositions() {
+  const groups = {};
+  characters.forEach(c => (groups[c.group] = groups[c.group] || []).push(c));
+  Object.entries(groups).forEach(([g, arr]) => {
+    const a = factionAngles[g];
+    const cx = a.cx * W, cy = a.cy * H;
+    if (g === "protagonist") {
+      arr.forEach((c, i) => {
+        const ang = (i / arr.length) * Math.PI * 2 - Math.PI/2;
+        const rad = 90 + (c.sz === "L" ? -10 : c.sz === "M" ? 30 : 70);
+        c.x = cx + Math.cos(ang) * rad;
+        c.y = cy + Math.sin(ang) * rad * 0.7;
+      });
+    } else {
+      arr.forEach((c, i) => {
+        const ang = (i / arr.length) * Math.PI * 2;
+        const rad = 90 + Math.random() * 40;
+        c.x = cx + Math.cos(ang) * rad;
+        c.y = cy + Math.sin(ang) * rad;
+      });
+    }
+  });
+}
+seedPositions();
+
+// Force simulation
+const sim = d3.forceSimulation(characters)
+  .force("link", d3.forceLink(links).id(d => d.id)
+    .distance(d => {
+      if (d.type === "love")     return 110;
+      if (d.type === "family")   return 90;
+      if (d.type === "friend")   return 130;
+      if (d.type === "romantic") return 150;
+      return 165;
+    }).strength(.38))
+  .force("charge", d3.forceManyBody().strength(d =>
+    d.sz === "L" ? -780 : d.sz === "M" ? -520 : -300))
+  .force("center", d3.forceCenter(W/2, H/2))
+  .force("collide", d3.forceCollide(d => nodeR(d) + 14))
+  // Faction clustering: pull each node toward its faction anchor
+  .force("xFac", d3.forceX(d => factionAngles[d.group].cx * W).strength(.10))
+  .force("yFac", d3.forceY(d => factionAngles[d.group].cy * H).strength(.10));
+
+// ── Faction halos (drawn behind everything) ─────────────
+const haloGroups = Object.keys(GROUP_META).map(g => ({
+  key: g, ...GROUP_META[g],
+  members: characters.filter(c => c.group === g),
+}));
+const haloSel = gHalo.selectAll("g.halo").data(haloGroups).join("g")
+  .attr("class","halo");
+
+haloSel.append("ellipse")
+  .attr("class","halo-ellipse")
+  .attr("fill", d => d.color)
+  .attr("fill-opacity", .035)
+  .attr("stroke", d => d.color)
+  .attr("stroke-opacity", .14)
+  .attr("stroke-dasharray","2 5");
+
+haloSel.append("text").attr("class","halo-chi")
+  .attr("dy", -8)
+  .text(d => d.chi);
+haloSel.append("text").attr("class","halo-label")
+  .attr("dy", 8)
+  .text(d => d.label);
+
+// ── Links (curved paths) ────────────────────────────────
+const linkSel = gLink.selectAll("path").data(links).join("path")
+  .attr("class","link")
+  .attr("stroke", d => d.color)
+  .attr("stroke-width", d => d.w)
+  .attr("stroke-dasharray", d => d.dash ? "5,5" : null)
+  .attr("marker-end", d => `url(#a-${d.color.replace("#","")})`)
+  .attr("stroke-opacity", .52)
+  .style("color", d => d.color);
+
+// ── Link labels ─────────────────────────────────────────
+const lblSel = gLbl.selectAll("g").data(links).join("g").attr("class","link-label-g");
+lblSel.append("text").attr("class","link-label").text(d => d.label);
+
+// ── Nodes ───────────────────────────────────────────────
+const nodeSel = gNode.selectAll("g").data(characters).join("g")
+  .attr("class","node-group")
+  .attr("data-id", d => d.id)
+  .call(d3.drag()
+    .on("start", (e,d) => { if (!e.active) sim.alphaTarget(.3).restart(); d.fx = d.x; d.fy = d.y; })
+    .on("drag",  (e,d) => { d.fx = e.x; d.fy = e.y; })
+    .on("end",   (e,d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }))
+  .on("click", (e,d) => { e.stopPropagation(); selectNode(d.id); })
+  .on("mouseover", (e,d) => showTip(e, d))
+  .on("mousemove", (e,d) => moveTip(e))
+  .on("mouseout",  () => hideTip());
+
+// outer ring
+nodeSel.append("circle").attr("class","node-outer")
+  .attr("r", d => nodeR(d) + 4)
+  .attr("stroke", d => GROUP_META[d.group].color)
+  .attr("stroke-width", d => d.sz === "L" ? 2.4 : d.sz === "M" ? 2 : 1.5)
+  .style("color", d => GROUP_META[d.group].color);
+
+// inner disc (gradient feel)
+nodeSel.append("circle").attr("class","node-inner")
+  .attr("r", d => nodeR(d))
+  .attr("fill", d => GROUP_META[d.group].color + "22")
+  .attr("stroke", d => GROUP_META[d.group].colorL)
+  .attr("stroke-width", 1);
+
+// glyph
+nodeSel.append("text").attr("class","node-icon")
+  .attr("y", d => d.sz === "L" ? -11 : d.sz === "M" ? -8 : -6)
+  .attr("font-size", d => d.sz === "L" ? "18px" : d.sz === "M" ? "14px" : "11px")
+  .attr("fill", d => GROUP_META[d.group].colorL)
+  .text(d => d.glyph);
+
+// name
+nodeSel.append("text").attr("class","node-name")
+  .attr("y", d => d.sz === "L" ? 9 : d.sz === "M" ? 6 : 5)
+  .attr("font-size", d => d.sz === "L" ? "10.5px" : d.sz === "M" ? "8.5px" : "7.5px")
+  .text(d => {
+    if (d.sz === "S" && d.name.length > 14) return d.name.split(" ").slice(0,2).join(" ");
+    return d.name;
+  });
+
+// role
+nodeSel.append("text").attr("class","node-sub")
+  .attr("y", d => d.sz === "L" ? 22 : d.sz === "M" ? 18 : 15)
+  .attr("font-size", d => d.sz === "L" ? "8.5px" : "7.5px")
+  .text(d => {
+    const r = d.role.split(" · ")[0];
+    return r.length > 16 ? r.substr(0, 15) + "…" : r;
+  });
+
+// ep
+nodeSel.append("text").attr("class","node-ep")
+  .attr("y", d => d.sz === "L" ? 33 : d.sz === "M" ? 27 : 23)
+  .attr("font-size", "6.5px")
+  .text(d => `EP ${d.ep}`);
+
+// Curved-path drawer
+function linkPath(d) {
+  const sx = d.source.x, sy = d.source.y, tx = d.target.x, ty = d.target.y;
+  const dx = tx - sx, dy = ty - sy;
+  const dr = Math.hypot(dx, dy) * 2.6;
+  return `M${sx},${sy} A${dr},${dr} 0 0,1 ${tx},${ty}`;
+}
+function midPoint(d) {
+  // Approximate midpoint on the curve (offset slightly above straight midpoint)
+  const sx = d.source.x, sy = d.source.y, tx = d.target.x, ty = d.target.y;
+  const mx = (sx + tx) / 2, my = (sy + ty) / 2;
+  const nx = -(ty - sy), ny = (tx - sx);
+  const len = Math.hypot(nx, ny) || 1;
+  return [mx + (nx/len) * 8, my + (ny/len) * 8];
+}
+
+sim.on("tick", () => {
+  linkSel.attr("d", linkPath);
+  lblSel.attr("transform", d => {
+    const [mx, my] = midPoint(d);
+    return `translate(${mx},${my})`;
+  });
+  nodeSel.attr("transform", d => `translate(${d.x},${d.y})`);
+
+  // halos: bounding circles around faction members
+  haloSel.select(".halo-ellipse").each(function(d){
+    if (!d.members.length) return;
+    const xs = d.members.map(m => m.x), ys = d.members.map(m => m.y);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    const rx = (Math.max(...xs) - Math.min(...xs)) / 2 + 70;
+    const ry = (Math.max(...ys) - Math.min(...ys)) / 2 + 70;
+    d3.select(this).attr("cx",cx).attr("cy",cy).attr("rx",rx).attr("ry",ry);
+    d._cx = cx; d._cy = cy; d._rx = rx; d._ry = ry;
+  });
+  haloSel.selectAll("text")
+    .attr("x", d => d._cx || 0)
+    .attr("y", d => (d._cy || 0) - (d._ry || 0) - 14);
+});
+
+// ═══════════════════════ INTERACTIONS ════════════════════
+let sel = null;
+let labelsMode = "selected"; // selected | all | none
+const tip = document.getElementById("tooltip");
+
+function selectNode(id) {
+  if (sel === id) { clearSel(); return; }
+  sel = id;
+  const d = charMap[id];
+  const cl = links.filter(l => l.source.id === id || l.target.id === id);
+  const ci = new Set(cl.flatMap(l => [l.source.id, l.target.id]));
+
+  nodeSel
+    .classed("dimmed", n => !ci.has(n.id))
+    .classed("selected", n => n.id === id);
+
+  linkSel
+    .classed("dimmed", l => l.source.id !== id && l.target.id !== id)
+    .classed("highlighted", l => l.source.id === id || l.target.id === id);
+
+  lblSel.selectAll("text.link-label")
+    .classed("shown", l => labelsMode === "all" || (l.source.id === id || l.target.id === id));
+
+  // Detail panel
+  document.getElementById("panel-name").textContent = d.name;
+  document.getElementById("panel-chinese").textContent = d.chinese;
+  document.getElementById("panel-role").textContent = d.role;
+  document.getElementById("panel-desc").textContent = d.desc;
+  document.getElementById("panel-ep").textContent = `Debut · Ep ${d.ep}`;
+  document.getElementById("panel-faction").textContent = GROUP_META[d.group].label;
+  document.getElementById("panel-bar").style.background = GROUP_META[d.group].color;
+  document.getElementById("panel-actor").innerHTML = d.actor ? `Portrayed by <span>${d.actor}</span>` : "";
+  document.getElementById("panel-aliases").innerHTML = (d.aliases || []).map(a => `<span class="alias-chip">${a}</span>`).join("");
+  document.getElementById("conn-count").textContent = cl.length;
+
+  // group connections by type
+  const grouped = {};
+  cl.forEach(l => (grouped[l.type] = grouped[l.type] || []).push(l));
+  const html = Object.entries(grouped)
+    .sort(([a],[b]) => TYPE_META[a].order - TYPE_META[b].order)
+    .map(([type, ls]) => {
+      const meta = TYPE_META[type];
+      return `
+        <div class="conn-group">
+          <div class="conn-group-h"><span class="swatch" style="background:${meta.swatch}"></span>${meta.label}</div>
+          ${ls.map(l => {
+            const o = l.source.id === id ? l.target : l.source;
+            const oc = charMap[o.id];
+            return `<div class="conn-item" data-target="${oc.id}">
+              <div class="conn-dot" style="background:${l.color}"></div>
+              <div class="conn-text"><span class="conn-name">${oc.name}</span><br><span class="conn-rel">${l.label}</span></div>
+            </div>`;
+          }).join("")}
+        </div>`;
+    }).join("");
+  document.getElementById("panel-connections").innerHTML = html;
+
+  // hook up conn item clicks
+  document.querySelectorAll("#panel-connections .conn-item").forEach(el => {
+    el.addEventListener("click", () => selectNode(el.dataset.target));
+  });
+
+  document.getElementById("detail-panel").classList.add("visible");
+
+  // rail
+  document.querySelectorAll(".char-row").forEach(r => r.classList.toggle("active", r.dataset.id === id));
+}
+
+function clearSel() {
+  sel = null;
+  nodeSel.classed("dimmed", false).classed("selected", false);
+  linkSel.classed("dimmed", false).classed("highlighted", false);
+  lblSel.selectAll("text.link-label").classed("shown", labelsMode === "all");
+  document.getElementById("detail-panel").classList.remove("visible");
+  document.querySelectorAll(".char-row").forEach(r => r.classList.remove("active"));
+}
+
+svg.on("click", clearSel);
+document.getElementById("close-panel").addEventListener("click", clearSel);
+
+// ── Tooltip ──────────────────────────────────────────────
+function showTip(e, d) {
+  if (sel) return;
+  tip.style.display = "block";
+  tip.innerHTML = `<strong>${d.name}</strong><div class="tip-chi">${d.chinese}</div><em>${d.role}</em>`;
+  moveTip(e);
+}
+function moveTip(e) {
+  const r = stage.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  tip.style.left = Math.min(x + 16, r.width - 240) + "px";
+  tip.style.top  = Math.min(y + 16, r.height - 100) + "px";
+}
+function hideTip() { tip.style.display = "none"; }
+
+// ── Faction & EP filters ─────────────────────────────────
+let activeG = "all", activeEp = null;
+const epRanges = { 1:[1,6], 7:[7,9], 10:[10,11] };
+
+document.querySelectorAll("#faction-filters .filter-pill").forEach(p => {
+  p.addEventListener("click", () => {
+    document.querySelectorAll("#faction-filters .filter-pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    activeG = p.dataset.filter;
+    clearSel(); applyFilters();
+  });
+});
+document.querySelectorAll("#ep-filters .filter-pill").forEach(p => {
+  p.addEventListener("click", () => {
+    const was = p.classList.contains("active");
+    document.querySelectorAll("#ep-filters .filter-pill").forEach(x => x.classList.remove("active"));
+    activeEp = was ? null : parseInt(p.dataset.ep);
+    if (!was) p.classList.add("active");
+    clearSel(); applyFilters();
+  });
+});
+
+function isVisible(n) {
+  const gOk = activeG === "all" || n.group === activeG;
+  let eOk = true;
+  if (activeEp !== null) {
+    const [lo, hi] = epRanges[activeEp];
+    eOk = n.ep >= lo && n.ep <= hi;
+  }
+  return gOk && eOk;
+}
+
+function applyFilters() {
+  nodeSel.classed("dimmed", n => !isVisible(n));
+  linkSel.classed("dimmed", l => !(isVisible(l.source) && isVisible(l.target)));
+  document.querySelectorAll(".char-row").forEach(r => {
+    const c = charMap[r.dataset.id];
+    r.classList.toggle("dim", !isVisible(c));
+  });
+}
+
+// ── Zoom controls ────────────────────────────────────────
+document.getElementById("zoom-in").onclick    = () => svg.transition().duration(260).call(zoom.scaleBy, 1.35);
+document.getElementById("zoom-out").onclick   = () => svg.transition().duration(260).call(zoom.scaleBy, .76);
+document.getElementById("zoom-reset").onclick = () => svg.transition().duration(360).call(zoom.transform,
+  d3.zoomIdentity.translate(W/2, H/2).scale(.78).translate(-W/2, -H/2));
+
+// Labels toggle
+const toggleLbl = document.getElementById("toggle-labels");
+toggleLbl.addEventListener("click", () => {
+  labelsMode = labelsMode === "selected" ? "all" : "selected";
+  toggleLbl.classList.toggle("on", labelsMode === "all");
+  lblSel.selectAll("text.link-label").classed("shown", l =>
+    labelsMode === "all" || (sel && (l.source.id === sel || l.target.id === sel))
+  );
+});
+
+// ── Character index (rail) ──────────────────────────────
+function buildRail() {
+  const list = document.getElementById("char-list");
+  const groupOrder = ["protagonist","neutral","antagonist","minor","deceased"];
+  let html = "";
+  groupOrder.forEach(g => {
+    const arr = characters.filter(c => c.group === g).sort((a,b) => a.name.localeCompare(b.name));
+    if (!arr.length) return;
+    html += `<div class="char-group-h">${GROUP_META[g].label}</div>`;
+    arr.forEach(c => {
+      html += `<div class="char-row" data-id="${c.id}">
+        <div class="cr-dot" style="background:${GROUP_META[g].colorL}"></div>
+        <div class="cr-name">${c.name}</div>
+        <div class="cr-chi">${c.chinese}</div>
+      </div>`;
+    });
+  });
+  list.innerHTML = html;
+  document.getElementById("rail-count").textContent = characters.length;
+  list.querySelectorAll(".char-row").forEach(el => {
+    el.addEventListener("click", () => {
+      const id = el.dataset.id;
+      selectNode(id);
+      // center on selected node
+      const d = charMap[id];
+      svg.transition().duration(440).call(zoom.transform,
+        d3.zoomIdentity.translate(W/2, H/2).scale(1).translate(-d.x, -d.y));
+    });
+  });
+}
+buildRail();
+
+// ── Search ───────────────────────────────────────────────
+const searchInput = document.getElementById("search-input");
+const searchResults = document.getElementById("search-results");
+
+function runSearch(q) {
+  q = q.trim().toLowerCase();
+  if (!q) { searchResults.classList.remove("open"); return; }
+  const hits = characters.filter(c => {
+    const hay = (c.name + " " + c.chinese + " " + c.role + " " + (c.aliases||[]).join(" ")).toLowerCase();
+    return hay.includes(q);
+  }).slice(0, 12);
+  if (!hits.length) {
+    searchResults.innerHTML = `<div class="sr-empty">No characters found.</div>`;
+  } else {
+    searchResults.innerHTML = hits.map(c => `
+      <div class="sr-item" data-id="${c.id}">
+        <span class="sr-name">${c.name}</span>
+        <span class="sr-chi">${c.chinese}</span>
+        <span class="sr-role">${c.role.split(" · ")[0]}</span>
+      </div>`).join("");
+    searchResults.querySelectorAll(".sr-item").forEach(el => {
+      el.addEventListener("click", () => {
+        const d = charMap[el.dataset.id];
+        selectNode(d.id);
+        searchInput.value = ""; searchResults.classList.remove("open");
+        svg.transition().duration(440).call(zoom.transform,
+          d3.zoomIdentity.translate(W/2, H/2).scale(1.1).translate(-d.x, -d.y));
+      });
+    });
+  }
+  searchResults.classList.add("open");
+}
+searchInput.addEventListener("input", e => runSearch(e.target.value));
+searchInput.addEventListener("focus", () => { if (searchInput.value) runSearch(searchInput.value); });
+document.addEventListener("click", e => {
+  if (!e.target.closest(".search")) searchResults.classList.remove("open");
+});
+document.addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault(); searchInput.focus(); searchInput.select();
+  } else if (e.key === "Escape") {
+    searchInput.blur(); searchResults.classList.remove("open"); clearSel();
+  }
+});
+
+// ── Resize ───────────────────────────────────────────────
+window.addEventListener("resize", () => {
+  W = stage.clientWidth; H = stage.clientHeight;
+  sim.force("center", d3.forceCenter(W/2, H/2))
+     .force("xFac", d3.forceX(d => factionAngles[d.group].cx * W).strength(.10))
+     .force("yFac", d3.forceY(d => factionAngles[d.group].cy * H).strength(.10))
+     .alpha(.3).restart();
+});
+
+// Initial settle
+sim.alpha(1).restart();
+setTimeout(() => {
+  svg.transition().duration(600).call(zoom.transform,
+    d3.zoomIdentity.translate(W/2, H/2).scale(.78).translate(-W/2, -H/2));
+}, 400);
+</script>
+</body>
+</html>
