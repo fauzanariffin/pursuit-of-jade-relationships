@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pursuit of Jade — Character Map (Ep 1–11)</title>
+<title>Pursuit of Jade — Character Map (Ep 1–22)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -539,7 +539,7 @@
     <span class="latin">Pursuit&nbsp;of&nbsp;Jade</span>
     <span class="rule"></span>
     <span class="sub">A character relationship map</span>
-    <span class="ep-badge">EP 1 — 11</span>
+    <span class="ep-badge">EP 1 — 22</span>
   </div>
 
   <div class="head-right">
@@ -577,7 +577,7 @@
   <aside id="rail">
     <div class="rail-head">
       <div class="rail-title">Dramatis Personae</div>
-      <div class="rail-count" id="rail-count">32</div>
+      <div class="rail-count" id="rail-count">49</div>
     </div>
 
     <div class="filter-pills" id="faction-filters">
@@ -594,7 +594,8 @@
       <div class="filter-pills" style="padding:7px 0 0; border:none;" id="ep-filters">
         <div class="filter-pill" data-ep="1">Ep 1 – 6</div>
         <div class="filter-pill" data-ep="7">Ep 7 – 9</div>
-        <div class="filter-pill" data-ep="10">Ep 10 – 11</div>
+        <div class="filter-pill" data-ep="10">Ep 10 – 16</div>
+        <div class="filter-pill" data-ep="17">Ep 17 – 22</div>
       </div>
     </div>
 
@@ -636,7 +637,7 @@
         </div>
         <div class="panel-connections">
           <div class="conn-title">
-            <span>Connections, Ep 1–11</span>
+            <span>Connections, Ep 1–22</span>
             <span class="conn-count" id="conn-count"></span>
           </div>
           <div id="panel-connections"></div>
@@ -652,19 +653,19 @@ const characters = [
   // ── PROTAGONISTS
   { id:"changyu",      name:"Fan Chang Yu",       chinese:"范昌玉",    aliases:[],
     role:"Female Lead",
-    desc:"Orphaned butcher's daughter raising her younger sister alone. Fearless, skilled with a cleaver and her father's pole technique. Saves a half-dead stranger in a snowstorm — who turns out to be the missing Marquis of Wu'an. Their marriage of convenience slowly becomes real. Targeted by the Wei faction over a hidden letter in her home.",
+    desc:"Orphaned butcher's daughter raising her younger sister alone. Fearless, skilled with a cleaver and her father's pole technique. Saves a half-dead stranger in a snowstorm — who turns out to be the missing Marquis of Wu'an. By ep 22, she has survived Lin'an's massacre, become the feared 'Butcher Lady of Jizhou,' searched for the abducted Changning, and turned her eye for terrain into a crucial dam-breach insight.",
     actor:"Tian Xi Wei", group:"protagonist", ep:1, glyph:"⚔", sz:"L" },
   { id:"xiezheng",     name:"Xie Zheng",          chinese:"谢铮",      aliases:["alias: Yan Zheng","Marquis of Wu'an","courtesy: Jiuheng"],
     role:"Male Lead · Fallen Marquis of Wu'an",
-    desc:"Rightful Marquis of Wu'an, living undercover as 'Yan Zheng' to evade Chancellor Wei's assassins. His entire family was killed 17 years ago in a political massacre. Came to Lin'an to investigate but was ambushed and nearly died before Changyu found him. Slowly, against all his plans, he falls for his butcher wife. Commands a loyal Black Robed Cavalry Guard and sends orders via a gyrfalcon.",
+    desc:"Rightful Marquis of Wu'an, living undercover as 'Yan Zheng' to evade Chancellor Wei's assassins. His entire family was killed 17 years ago in a political massacre. By ep 17 he resumes command of the Blood Robe Cavalry, breaks Chongzhou grain routes, confronts the Sui brothers at Baxia, and treats Changyu as more than a temporary wife even while trying to keep her away from the front.",
     actor:"Zhang Ling He", group:"protagonist", ep:1, glyph:"⟁", sz:"L" },
   { id:"changning",    name:"Fan Chang Ning",     chinese:"范昌宁",    aliases:[],
     role:"Chang Yu's Younger Sister",
-    desc:"Fan Chang Yu's cheerful, perceptive younger sister. Suffers asthma attacks when frightened. Both Fan sisters are targeted by Chancellor Wei for a letter believed hidden in their family home. Quickly becomes fond of Yan Zheng.",
+    desc:"Fan Chang Yu's cheerful, perceptive younger sister. Suffers asthma attacks when frightened. Both Fan sisters are targeted by Chancellor Wei for a letter believed hidden in their family home. After Lin'an falls, she is abducted by Qingfeng Fort and used by Sui Yuanqing as leverage against Xie Zheng, while comforting Baoer in captivity.",
     actor:"", group:"protagonist", ep:1, glyph:"❀", sz:"S" },
   { id:"gongsunyin",   name:"Gongsun Yin",        chinese:"公孙胤",    aliases:[],
     role:"Xie Zheng's Best Friend · Headmaster, Luyuan Academy",
-    desc:"Xie Zheng's closest friend and trusted military advisor. Headmaster of the prestigious Luyuan Academy — a name so powerful it immediately cows Magistrate Cui into releasing Xie Zheng. They communicate via secret messenger birds. Arrives in ep 7 to rescue Xie Zheng from jail. Unknowingly the target of Princess Qi Shu's secret affections.",
+    desc:"Xie Zheng's closest friend and trusted military advisor. Headmaster of the prestigious Luyuan Academy — a name so powerful it immediately cows Magistrate Cui into releasing Xie Zheng. Paints the warm Lantern Festival portrait of Xie Zheng, Changyu, and Changning that later becomes Sui Yuanqing's hostage clue.",
     actor:"Li Qing", group:"protagonist", ep:7, glyph:"𓅂", sz:"M" },
 
   // ── NEUTRAL / ALLIES
@@ -674,11 +675,11 @@ const characters = [
     actor:"Ren Hao", group:"neutral", ep:9, glyph:"⚖", sz:"M" },
   { id:"yuqianqian",   name:"Yu Qian Qian",       chinese:"余倩倩",    aliases:[],
     role:"Owner of Yixiang Restaurant",
-    desc:"Beautiful and shrewd restaurateur who built Yixiang from nothing after arriving in Lin'an pregnant and alone. Befriends Changyu and hires her to supply braised meat. Being relentlessly pursued by Qi Min who suspects her son Baoer is his. In ep 10, she and Changyu are ambushed by Guo Dali — saved by Xie Zheng. Is planning a countermove against Qi Min.",
+    desc:"Beautiful and shrewd restaurateur who built Yixiang from nothing after arriving in Lin'an pregnant and alone. Befriends Changyu and hires her to supply braised meat. By ep 22, she is trapped under Sui Yuanhuai's control, trying to keep Baoer alive through performance, misdirection, and a fragile alliance with Granny Lan.",
     actor:"Snow Kong", group:"neutral", ep:8, glyph:"⛯", sz:"M" },
   { id:"baoer",        name:"Baoer",              chinese:"宝儿",      aliases:[],
     role:"Yu Qianqian's Son",
-    desc:"Yu Qianqian's young son. His birth date (9th day of the 8th month, Dingchou year) was secretly confirmed by Qi Min's men, cementing Qi Min's belief that Baoer is his biological child — putting mother and son in serious danger.",
+    desc:"Yu Qianqian's young son. His birth date (9th day of the 8th month, Dingchou year) was secretly confirmed by Qi Min's men, cementing Qi Min's belief that Baoer is his biological child. In captivity, he refuses food, tries to make himself sick to see his mother, and is steadied by Changning's bamboo whistle.",
     actor:"", group:"neutral", ep:9, glyph:"☘", sz:"S" },
   { id:"mrszao",       name:"Mr. & Mrs. Zhao",    chinese:"赵老夫妇",  aliases:[],
     role:"Neighbors · Landlords",
@@ -686,64 +687,100 @@ const characters = [
     actor:"", group:"neutral", ep:1, glyph:"⌂", sz:"S" },
   { id:"constablewang",name:"Constable Wang",     chinese:"王捕头",    aliases:[],
     role:"Local Constable",
-    desc:"Lin'an's generally fair-minded constable, despite serving under the corrupt Magistrate Cui. Relays information to Changyu during both arrest incidents, and helped keep order when thugs invaded her home. Walks a careful line between doing his job and being decent.",
-    actor:"", group:"neutral", ep:2, glyph:"✦", sz:"S" },
+    desc:"Lin'an's generally fair-minded constable, despite serving under the corrupt Magistrate Cui. Relays information to Changyu during both arrest incidents, locks the city gates during the grain riot, and dies resisting Sui Yuanqing's massacre of Lin'an.",
+    actor:"Du Chun", group:"deceased", ep:2, glyph:"†", sz:"S" },
   { id:"grandtutorli", name:"Grand Tutor Li",     chinese:"李太傅",    aliases:["Li Jing / Li Xing"],
     role:"Imperial Grand Tutor · Li Faction Leader",
     desc:"Li Huai An's grandfather and head of the Li court faction opposing Chancellor Wei. Married his daughter to Emperor Qi Sheng (she is the Empress, kept childless by court design to balance power). Publicly backs Xie Zheng's honour at court in ep 10. Both factions are secretly searching for the missing Marquis.",
     actor:"Wang Jiu Sheng", group:"neutral", ep:3, glyph:"卷", sz:"S" },
   { id:"hejingyuan",   name:"Gen. He Jingyuan",   chinese:"何景远将军",aliases:[],
     role:"Prefect of Jizhou · Mentor to Xie Zheng & Li Huai An",
-    desc:"Veteran general and mentor to both Xie Zheng and Li Huai An. Was also a close friend of the Fan sisters' late father, Wei Qilin. In ep 9–10, he uses a Tiger Seal and military documents from 16 years ago to coerce Chancellor Wei into stopping his attacks on the Fan sisters. Asks Li Huai An to promise to protect the girls should he die.",
+    desc:"Veteran general and mentor to both Xie Zheng and Li Huai An. Was also a close friend of the Fan sisters' late father, Wei Qilin. Arrested when Wei Xuan's men seize grain, then rejoins Xie Zheng's loyalist strategy against Chongzhou. His Jizhou Army helps crush the rebel ambush and intercept the stolen grain.",
     actor:"Lu Yong", group:"neutral", ep:9, glyph:"虎", sz:"S" },
   { id:"qishu",        name:"Princess Qi Shu",    chinese:"齐姝公主",  aliases:[],
     role:"Princess Royal",
     desc:"A princess who secretly harbours deep feelings for Gongsun Yin. In ep 11, her mother Consort Dowager An forces her to attend the Lantern Festival with Li Huai An instead — citing imperial regulations and family prestige. Left devastated. A three-way romantic tension between her, Gongsun Yin, and Li Huai An is forming.",
     actor:"Yu Zhong Li", group:"neutral", ep:11, glyph:"❖", sz:"S" },
+  { id:"jianjia",      name:"Jianjia",            chinese:"蒹葭",      aliases:[],
+    role:"Princess Qi Shu's Maid",
+    desc:"Princess Qi Shu's attendant. Part of the princess's court-side circle as Qi Shu is pulled between her private feelings for Gongsun Yin and her mother's arranged path toward Li Huai An.",
+    actor:"Wang Ting Wen", group:"neutral", ep:11, glyph:"簪", sz:"S" },
   { id:"emperorqisheng",name:"Emperor Qi Sheng",  chinese:"齐圣皇帝",  aliases:[],
     role:"Emperor of Great Yin",
     desc:"The Emperor, who appears in court scenes in ep 10. Largely a figurehead — real power is held by Chancellor Wei. He expresses genuine grief at news of Xie Zheng's supposed death and proposes posthumously honouring him with a duke's title, but Wei Yan overrules him in open court.",
     actor:"", group:"neutral", ep:10, glyph:"龍", sz:"S" },
   { id:"tangpeiyi",    name:"Tang Pei Yi",        chinese:"唐培义",    aliases:[],
     role:"He Jingyuan's Subordinate Officer",
-    desc:"General He Jingyuan's trusted subordinate, stationed in Jizhou.",
+    desc:"General He Jingyuan's trusted subordinate, stationed in Jizhou. By ep 22, he oversees the dam-breach operation and changes course when Tao Yi identifies the correct drilling points.",
     actor:"Chen Yu Ming", group:"neutral", ep:10, glyph:"刀", sz:"S" },
   { id:"zhuoran",      name:"Zhuo Ran",           chinese:"卓然",      aliases:[],
     role:"Li Huai An's Subordinate",
     desc:"Li Huai An's loyal right-hand man who accompanies him to Lin'an.",
     actor:"Han Hao Tian", group:"neutral", ep:9, glyph:"刀", sz:"S" },
+  { id:"xieqi",        name:"Xie Qi",             chinese:"谢起",      aliases:["Blood Robe Cavalry"],
+    role:"Xie Zheng's Guard",
+    desc:"One of Xie Zheng's close guards in the Blood Robe Cavalry. Seen with Xie Wu around Xie Zheng's secret movements; later ordered to stay near Changyu's recovery site after the Lin'an massacre.",
+    actor:"", group:"neutral", ep:10, glyph:"盾", sz:"S" },
+  { id:"xiewu",        name:"Xie Wu",             chinese:"谢五",      aliases:["Blood Robe Cavalry"],
+    role:"Xie Zheng's Guard",
+    desc:"One of Xie Zheng's named guards. Helps guard the hidden recovery site after Changyu is rescued, only to be outwitted when she wakes disoriented and escapes with the blind granny.",
+    actor:"Zhang Shu Lun", group:"neutral", ep:10, glyph:"盾", sz:"S" },
+  { id:"taoyi",        name:"Tao Yi",             chinese:"陶太傅",    aliases:["Old Man Tao","Tao Laotou","Former Minister of Works"],
+    role:"Grand Tutor · Former Minister of Works",
+    desc:"An elderly scholar Changyu meets in the Jizhou quarry. Frail in body but brilliant in engineering, he is later confirmed as Xie Zheng's old teacher and a former Minister of Works. In ep 22, he corrects the dam-breach plan and sacrifices his safer lot for Changyu.",
+    actor:"Li Jian Yi", group:"neutral", ep:21, glyph:"算", sz:"S" },
+  { id:"grannylan",    name:"Granny Lan",         chinese:"兰嬷嬷",    aliases:["Nanny Lan"],
+    role:"Sui Yuanhuai's Nanny · Zhao Xun's Mother",
+    desc:"An elderly woman in Sui Yuanhuai's household and Zhao Xun's mother. She probes Baoer's birth details for Qi Min, yet later works with Yu Qianqian to keep the child alive inside Baxia Manor.",
+    actor:"", group:"neutral", ep:14, glyph:"灯", sz:"S" },
 
   // ── ANTAGONISTS
   { id:"chancellorwei",name:"Chancellor Wei",     chinese:"魏相",      aliases:["Wei Yan","Prime Minister"],
     role:"Prime Minister · Main Antagonist",
-    desc:"The all-powerful Prime Minister and the real power behind the Emperor. Engineered the Jizhou massacre 17 years ago that killed Xie Zheng's father. Commands the Iron Suicide Warriors. His wife's congratulatory reaction upon hearing Xie Zheng is alive hints he may secretly know Xie Zheng is his nephew. Attends court while ill in ep 10 to oppose public mourning for Xie Zheng, fearing it would embolden enemies.",
-    actor:"", group:"antagonist", ep:3, glyph:"👁", sz:"M" },
+    desc:"The all-powerful Prime Minister and the real power behind the Emperor. Engineered the Jizhou massacre 17 years ago that killed Xie Zheng's father. Commands the Iron Suicide Warriors and tracks Xie Zheng through Wei Sheng. By ep 17, Xie Zheng's return becomes public, turning Wei Yan's hidden family and faction calculations volatile.",
+    actor:"Yan Yi Kuan", group:"antagonist", ep:3, glyph:"👁", sz:"M" },
   { id:"weixuan",      name:"Wei Xuan",           chinese:"魏宣",      aliases:[],
     role:"Wei Yan's Son · Wei Faction Military",
     desc:"Chancellor Wei's arrogant, reckless son. Forcibly seized grain from Jizhou civilians, provoking unrest. Had General He arrested when He tried to stop him. Xie Zheng deduces (ep 10) that Wei Xuan's grain seizures are a clumsy trap designed to bait Prince Changxin's rebels — a plan Wei Xuan doesn't even fully understand.",
     actor:"", group:"antagonist", ep:9, glyph:"⚡", sz:"S" },
   { id:"qimin",        name:"Qi Min",             chinese:"齐敏",      aliases:["true: Sui Yuanhuai","Prince Changxin's son"],
     role:"'Rice Merchant' (cover) · Rebel Prince",
-    desc:"Introduced as a wealthy rice merchant pursuing Yu Qianqian. His true identity is Sui Yuanhuai — elder son of the rebel Prince Changxin of Chongzhou. As a child, he stood in for the eldest prince and had half his face burned. His silver-haired menace is noted by everyone. Suspects Baoer is his son. May try to use Xie Zheng to eliminate his rival brother Sui Yuanqing.",
+    desc:"Introduced as a wealthy rice merchant pursuing Yu Qianqian. His known identity by ep 22 is Sui Yuanhuai, elder brother figure to Sui Yuanqing and a planner in the Chongzhou rebellion. He hoards grain, tries to lure Xie Zheng into an anti-Wei alliance, abducts Yu Qianqian and Baoer, and uses domestic tenderness as another form of control.",
     actor:"Deng Kai", group:"antagonist", ep:9, glyph:"☾", sz:"M" },
   { id:"magistratecui",name:"Magistrate Cui",     chinese:"崔知县",    aliases:[],
     role:"Local Magistrate · Corrupt",
-    desc:"Lin'an's corrupt magistrate. Detains Changyu without proper evidence; issues Xie Zheng an arrest warrant and orders 20 lashes to force a confession — despite obvious inconsistencies. Immediately reverses course when Gongsun Yin invokes Luyuan Academy credentials. Also tries to arrest Changyu in ep 9 for an illegal memorial tablet.",
-    actor:"", group:"antagonist", ep:6, glyph:"印", sz:"S" },
+    desc:"Lin'an's corrupt magistrate. Detains Changyu without proper evidence; issues Xie Zheng an arrest warrant and orders 20 lashes to force a confession. Later trapped by Sui Yuanqing's men during the grain-riot plot, then killed and displayed during the Lin'an massacre.",
+    actor:"Xiang Xia", group:"deceased", ep:6, glyph:"†", sz:"S" },
   { id:"guodali",      name:"Guo Da Li",          chinese:"郭大力",    aliases:[],
     role:"Rival Butcher · Local Antagonist",
     desc:"A rival butcher who resents Changyu's braised meat business. In ep 2 he accuses her of breaking trade rules at the market. In ep 10, he ambushes Changyu and Qianqian after dark using a knockout powder, hired to sabotage the braised meat business. Xie Zheng subdues him and drags him behind a carriage.",
     actor:"", group:"antagonist", ep:2, glyph:"✶", sz:"S" },
   { id:"zhaoxun",      name:"Zhao Xun",           chinese:"赵荀",      aliases:[],
     role:"Lin'an Rice Shop Manager · Qi Min's Agent",
-    desc:"Manager of the Lin'an Rice Shop and Qi Min's local informant-agent. In ep 10, he visits Yixiang Restaurant to introduce Qi Min to Yu Qianqian under the pretence of a business opportunity — in reality scouting her on behalf of Qi Min. Son of Nanny Lan.",
+    desc:"Manager of the Lin'an Rice Shop and Qi Min's local informant-agent. Introduces Qi Min to Yu Qianqian, later addresses Xie Zheng as Marquis to offer a rebel alliance, and in ep 22 helps Granny Lan smuggle Baoer out from under Sui Yuanhuai's eye.",
     actor:"Guan Zi Jing", group:"antagonist", ep:10, glyph:"禾", sz:"S" },
+  { id:"suiyuanqing",  name:"Sui Yuanqing",       chinese:"随元青",    aliases:["Heir of Lord Changxin","false: Wei Xuan"],
+    role:"Chongzhou Heir · Rebel Commander",
+    desc:"Ruthless heir of Lord Changxin. First moves under the false identity of Northwest Commissioner Wei Xuan, attempting to turn Lin'an against Great Yin. After surviving Xie Zheng's shot and fall, he recruits Qingfeng Fort, masterminds the Lin'an massacre, abducts Changning, and demands Yanzhou in ransom.",
+    actor:"Lin Mu Ran", group:"antagonist", ep:16, glyph:"戾", sz:"M" },
+  { id:"shisanniang",  name:"Shi Sanniang",       chinese:"十三娘",    aliases:["Lady Shisan","Chief of Qingfeng Fort"],
+    role:"Qingfeng Fort Chief",
+    desc:"Female chief of Qingfeng Fort, fierce with a spear and impressed by strength. She rescues the wounded Sui Yuanqing, falls for him after he defeats her, and lends Qingfeng Fort to the massacre that devastates Lin'an.",
+    actor:"Lin Si Yi", group:"antagonist", ep:18, glyph:"寨", sz:"S" },
+  { id:"qingfengsecond",name:"Second Master",     chinese:"清风寨二当家",aliases:["Deputy Chief of Qingfeng Fort"],
+    role:"Qingfeng Fort Deputy Chief",
+    desc:"Shi Sanniang's brother and deputy at Qingfeng Fort. Shoots Changyu off her horse during the Lin'an massacre pursuit and is killed by her in the fighting that follows.",
+    actor:"", group:"antagonist", ep:18, glyph:"寨", sz:"S" },
+  { id:"weisheng",     name:"Wei Sheng",          chinese:"魏盛",      aliases:[],
+    role:"Wei Yan's Shadow Agent",
+    desc:"A mysterious operative who follows Yan Zheng's trail and later reports directly to Chancellor Wei. Tests Xie Zheng after his return, watching for what the Marquis truly knows about the Jinzhou tragedy.",
+    actor:"", group:"antagonist", ep:1, glyph:"影", sz:"S" },
 
   // ── MINOR / BACKGROUND
   { id:"songyue",      name:"Mrs. Song",          chinese:"宋夫人",    aliases:[],
     role:"Song Yan's Mother · Social Bully",
-    desc:"Song Yan's snobbish mother who orchestrated the broken engagement with Changyu using a fortune teller's excuse. In ep 10, she hosts a lavish lunch at Yixiang Restaurant to boast about Song Yan's new socially elevated fiancée. Spots Changyu working there and publicly mocks her as an inferior. When Qianqian defends Changyu, Song's bullying turns to Qianqian's status as an 'unwed mother'.",
-    actor:"", group:"minor", ep:1, glyph:"扇", sz:"S" },
+    desc:"Song Yan's snobbish mother who orchestrated the broken engagement with Changyu using a fortune teller's excuse. Publicly mocks Changyu and Yu Qianqian, refuses to help Madam Kang during conscription, and during the Lin'an massacre betrays Changyu's location before Sui Yuanqing kills her for the treachery.",
+    actor:"", group:"deceased", ep:1, glyph:"†", sz:"S" },
   { id:"songyan",      name:"Song Yan",           chinese:"宋燕",      aliases:[],
     role:"Chang Yu's Ex-Fiancé",
     desc:"Changyu's former fiancé whose family called off their engagement after labelling her a 'star of ill omen'. He hides behind filial piety while his mother does the dirty work. Changyu's family had funded his education for years. She confronts them and refuses to return the engagement letter without reimbursement.",
@@ -754,8 +791,8 @@ const characters = [
     actor:"", group:"minor", ep:2, glyph:"骰", sz:"S" },
   { id:"madamkang",    name:"Madam Kang",         chinese:"康氏",      aliases:[],
     role:"Town Gossip",
-    desc:"A local gossip who publicly slanders Changyu in ep 1, calling her a 'star of ill omen' and insulting her late mother. Changyu responds by splashing a bucket of pig blood on her — one of the show's most satisfying opening moments.",
-    actor:"", group:"minor", ep:1, glyph:"舌", sz:"S" },
+    desc:"A local gossip who publicly slanders Changyu in ep 1, calling her a 'star of ill omen' and insulting her late mother. By ep 18, she earns a tragic reversal: sacrificing herself to draw bandits away from her grandson and Changning.",
+    actor:"", group:"deceased", ep:1, glyph:"†", sz:"S" },
   { id:"jinyuanbao",   name:"Jin Yuan Bao",       chinese:"金元宝",    aliases:[],
     role:"Debt Collector / Thug",
     desc:"Thug leader of the gambling den enforcers who invade Changyu's home in ep 2 at Uncle Fan Da Niu's behest. Changyu fights off his crew with her pole; Xie Zheng takes him down from an upstairs window with a precisely flicked chopstick.",
@@ -772,6 +809,42 @@ const characters = [
     role:"Magistrate Cui's Assistant",
     desc:"Magistrate Cui's scheming assistant who conspires with the magistrate during the arrests of Changyu and Yan Zheng (ep 6–9).",
     actor:"", group:"minor", ep:6, glyph:"筆", sz:"S" },
+  { id:"fuling",       name:"Fuling",             chinese:"茯苓",      aliases:[],
+    role:"Yu Qianqian's Maid",
+    desc:"Yu Qianqian's attendant at Yixiang Restaurant. Helps watch Baoer and Changning during the New Year visit, then becomes one of the human costs of Qi Min's pursuit when Yu Qianqian later flees Lin'an.",
+    actor:"", group:"deceased", ep:8, glyph:"†", sz:"S" },
+  { id:"cuiqianjin",   name:"Cui Qianjin",        chinese:"崔千金",    aliases:["Miss Cui"],
+    role:"Magistrate Cui's Daughter",
+    desc:"Magistrate Cui's daughter and Song Yan's prospective social climb. During Sui Yuanqing's seizure of the Cui residence, she bargains with Changyu to save her father and later refuses to betray Changyu during the Lin'an massacre, dying for it.",
+    actor:"", group:"deceased", ep:14, glyph:"†", sz:"S" },
+  { id:"fanlaoye",     name:"Old Master Fan",     chinese:"范老爷子",  aliases:["Fan Grandfather"],
+    role:"Changyu's Adoptive Grandfather",
+    desc:"The elderly Fan patriarch in Xigu Lane. In ep 15, he reveals that Fan Erniu was not his biological son: Changyu's father bought that identity years ago to hide from enemies and protect his daughters.",
+    actor:"", group:"minor", ep:8, glyph:"杖", sz:"S" },
+  { id:"auntmi",       name:"Aunt Mi",            chinese:"米氏",      aliases:["Aunt"],
+    role:"Fan Household Relative",
+    desc:"Fan family relative who neglects Old Master Fan after Fan Daniu's death. Changyu confronts her with the deed in Fan Erniu's name and leaves her fate to the old man.",
+    actor:"", group:"minor", ep:15, glyph:"碗", sz:"S" },
+  { id:"blindgranny",  name:"Blind Granny",       chinese:"盲婆婆",    aliases:["Blind Elderly Woman"],
+    role:"Rural Healer",
+    desc:"A blind elderly woman who shelters Xie Zheng and the half-frozen Changyu after the cliff fall. Diagnoses Changyu's sinister chill and guides the treatment that keeps her alive.",
+    actor:"", group:"minor", ep:18, glyph:"药", sz:"S" },
+  { id:"mandi",        name:"Man Di",             chinese:"满地",      aliases:["Jin Yuanbao's gang"],
+    role:"Lin'an Survivor · Jin Yuanbao's Man",
+    desc:"One of Jin Yuanbao's men from Lin'an. Reappears with the quarry laborers in ep 21, helping defend Changyu and joining the survivors who swear to return home after revenge.",
+    actor:"Gao Qing Chen", group:"minor", ep:2, glyph:"拳", sz:"S" },
+  { id:"mancang",      name:"Man Cang",           chinese:"满仓",      aliases:["Jin Yuanbao's gang"],
+    role:"Lin'an Survivor · Jin Yuanbao's Man",
+    desc:"One of Jin Yuanbao's men and a survivor of Lin'an. In ep 22 he overhears that the laborers left at the dam are meant to die, helping reveal Tao Yi's sacrifice.",
+    actor:"", group:"minor", ep:2, glyph:"拳", sz:"S" },
+  { id:"manwu",        name:"Man Wu",             chinese:"满五",      aliases:["Jin Yuanbao's gang"],
+    role:"Lin'an Survivor · Jin Yuanbao's Man",
+    desc:"One of Jin Yuanbao's men. At the quarry he notices Tao Yi and Changyu may be talking about the same man: Jiuheng to the old teacher, Yan Zheng to Changyu.",
+    actor:"", group:"minor", ep:2, glyph:"拳", sz:"S" },
+  { id:"sunzhuangzhuang",name:"Sun Zhuangzhuang", chinese:"孙壮壮",    aliases:[],
+    role:"Quarry Bully",
+    desc:"A bully among the Jizhou quarry laborers. Tries to cut the food line and insult Tao Yi, only to be struck down by Changyu in front of the other workers.",
+    actor:"", group:"minor", ep:21, glyph:"石", sz:"S" },
 
   // ── DECEASED
   { id:"weiqilin",     name:"Wei Qilin",          chinese:"魏奇霖",    aliases:["a.k.a. Fan Er Niu","Changyu's father"],
@@ -793,16 +866,25 @@ const links = [
   { source:"changyu",      target:"changning",     type:"family",   label:"Older sister",                              color:"#ffd700", w:1.8, dash:false },
   { source:"lihuaian",     target:"grandtutorli",  type:"family",   label:"Grandson",                                  color:"#ffd700", w:1.7, dash:false },
   { source:"yuqianqian",   target:"baoer",         type:"family",   label:"Mother & son",                              color:"#ffd700", w:1.7, dash:false },
+  { source:"qimin",        target:"baoer",         type:"family",   label:"Claims him as son",                         color:"#ffaa44", w:1.5, dash:true  },
   { source:"chancellorwei",target:"weixuan",       type:"family",   label:"Father & son",                              color:"#cc5555", w:1.6, dash:false },
   { source:"songyue",      target:"songyan",       type:"family",   label:"Mother & son",                              color:"#aaaaaa", w:1.4, dash:false },
   { source:"antaifei",     target:"qishu",         type:"family",   label:"Mother & daughter",                         color:"#ffd700", w:1.6, dash:false },
   { source:"fandaniu",     target:"changyu",       type:"family",   label:"Uncle (antagonistic)",                      color:"#887744", w:1.3, dash:false },
   { source:"fandaniu",     target:"changning",     type:"family",   label:"Uncle",                                     color:"#887744", w:1.3, dash:false },
+  { source:"fanlaoye",     target:"fandaniu",      type:"family",   label:"Father & son",                              color:"#887744", w:1.1, dash:false },
+  { source:"fanlaoye",     target:"changyu",       type:"family",   label:"Adoptive grandfather",                      color:"#c8b060", w:1.1, dash:true  },
+  { source:"auntmi",       target:"fanlaoye",      type:"family",   label:"Neglectful daughter-in-law",                color:"#887744", w:1.0, dash:true  },
   { source:"weiqilin",     target:"changyu",       type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
   { source:"weiqilin",     target:"changning",     type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
+  { source:"weiqilin",     target:"fanlaoye",      type:"family",   label:"Bought his son's identity",                 color:"#c8b060", w:1.1, dash:true  },
   { source:"xielinshan",   target:"xiezheng",      type:"family",   label:"Father (deceased)",                         color:"#c8b060", w:1.3, dash:true  },
   { source:"zhaoxun",      target:"qimin",         type:"family",   label:"Nanny Lan's son / Qi Min's agent",          color:"#cc3300", w:1.2, dash:false },
+  { source:"zhaoxun",      target:"grannylan",     type:"family",   label:"Mother & son",                              color:"#c8b060", w:1.1, dash:false },
   { source:"madamewei",    target:"chancellorwei", type:"family",   label:"Wife",                                      color:"#aa6666", w:1.2, dash:false },
+  { source:"suiyuanqing",  target:"qimin",         type:"family",   label:"Rebel brothers / uneasy partners",          color:"#cc5555", w:1.5, dash:false },
+  { source:"shisanniang",  target:"qingfengsecond",type:"family",   label:"Siblings",                                  color:"#aa6666", w:1.1, dash:false },
+  { source:"cuiqianjin",   target:"magistratecui", type:"family",   label:"Daughter",                                  color:"#aaaaaa", w:1.2, dash:false },
   // Friend
   { source:"xiezheng",     target:"gongsunyin",    type:"friend",   label:"Best friends / Advisor",                    color:"#4ecdc4", w:1.8, dash:false },
   { source:"changyu",      target:"yuqianqian",    type:"friend",   label:"Friends & business partners",               color:"#4ecdc4", w:1.6, dash:false },
@@ -816,15 +898,39 @@ const links = [
   { source:"xiezheng",     target:"hejingyuan",    type:"ally",     label:"Trained under (mentor)",                    color:"#87ceeb", w:1.3, dash:true  },
   { source:"tangpeiyi",    target:"hejingyuan",    type:"ally",     label:"Subordinate officer",                       color:"#888888", w:1.1, dash:false },
   { source:"zhuoran",      target:"lihuaian",      type:"ally",     label:"Loyal subordinate",                         color:"#888888", w:1.1, dash:false },
+  { source:"jianjia",      target:"qishu",         type:"ally",     label:"Attendant",                                  color:"#888888", w:1.0, dash:false },
+  { source:"xieqi",        target:"xiezheng",      type:"ally",     label:"Blood Robe guard",                          color:"#888888", w:1.2, dash:false },
+  { source:"xiewu",        target:"xiezheng",      type:"ally",     label:"Blood Robe guard",                          color:"#888888", w:1.2, dash:false },
+  { source:"xieqi",        target:"changyu",       type:"ally",     label:"Ordered to guard her recovery",             color:"#87ceeb", w:1.1, dash:true  },
+  { source:"xiewu",        target:"changyu",       type:"ally",     label:"Ordered to guard her recovery",             color:"#87ceeb", w:1.1, dash:true  },
   { source:"masterguo",    target:"magistratecui", type:"ally",     label:"Scheming assistant",                        color:"#888888", w:1.1, dash:false },
   { source:"constablewang",target:"magistratecui", type:"ally",     label:"Reports to (reluctantly)",                  color:"#888888", w:1.1, dash:false },
   { source:"constablewang",target:"changyu",       type:"ally",     label:"Aids / informs",                            color:"#87ceeb", w:1.3, dash:true  },
   { source:"grandtutorli", target:"emperorqisheng",type:"ally",     label:"Li faction — opposes Wei at court",         color:"#aaaaaa", w:1.2, dash:true  },
   { source:"hejingyuan",   target:"chancellorwei", type:"ally",     label:"Uses Tiger Seal to coerce truce",           color:"#ff9944", w:1.3, dash:true  },
+  { source:"weisheng",     target:"chancellorwei", type:"ally",     label:"Reports to Wei Yan",                        color:"#888888", w:1.2, dash:false },
+  { source:"grannylan",    target:"qimin",         type:"ally",     label:"Nanny / household elder",                   color:"#888888", w:1.1, dash:false },
+  { source:"grannylan",    target:"yuqianqian",    type:"ally",     label:"Uneasy pact to protect Baoer",              color:"#87ceeb", w:1.1, dash:true  },
+  { source:"grannylan",    target:"baoer",         type:"ally",     label:"Protects in captivity",                     color:"#87ceeb", w:1.1, dash:true  },
+  { source:"fuling",       target:"yuqianqian",    type:"ally",     label:"Maid / attendant",                          color:"#888888", w:1.0, dash:false },
+  { source:"fuling",       target:"baoer",         type:"ally",     label:"Watches over him",                          color:"#888888", w:1.0, dash:true  },
+  { source:"taoyi",        target:"xiezheng",      type:"ally",     label:"Teacher of Jiuheng",                        color:"#87ceeb", w:1.3, dash:true  },
+  { source:"taoyi",        target:"changyu",       type:"ally",     label:"Quarry ally / sacrifices lot",              color:"#87ceeb", w:1.3, dash:false },
+  { source:"taoyi",        target:"tangpeiyi",     type:"ally",     label:"Corrects dam-breach plan",                  color:"#87ceeb", w:1.2, dash:false },
+  { source:"blindgranny",  target:"changyu",       type:"ally",     label:"Shelters and treats her",                   color:"#87ceeb", w:1.2, dash:false },
+  { source:"blindgranny",  target:"xiezheng",      type:"ally",     label:"Guides Changyu's treatment",                color:"#87ceeb", w:1.0, dash:true  },
+  { source:"mandi",        target:"jinyuanbao",    type:"ally",     label:"Gang member",                               color:"#888888", w:1.0, dash:false },
+  { source:"mancang",      target:"jinyuanbao",    type:"ally",     label:"Gang member",                               color:"#888888", w:1.0, dash:false },
+  { source:"manwu",        target:"jinyuanbao",    type:"ally",     label:"Gang member",                               color:"#888888", w:1.0, dash:false },
+  { source:"mandi",        target:"changyu",       type:"ally",     label:"Lin'an survivor at quarry",                 color:"#87ceeb", w:1.0, dash:true  },
+  { source:"mancang",      target:"changyu",       type:"ally",     label:"Lin'an survivor at quarry",                 color:"#87ceeb", w:1.0, dash:true  },
+  { source:"manwu",        target:"changyu",       type:"ally",     label:"Lin'an survivor at quarry",                 color:"#87ceeb", w:1.0, dash:true  },
   // Romantic (yearning)
   { source:"qishu",        target:"gongsunyin",    type:"romantic", label:"Secret romantic feelings",                  color:"#cc88ff", w:1.5, dash:true  },
   { source:"antaifei",     target:"lihuaian",      type:"romantic", label:"Forces Qi Shu toward him",                  color:"#9966cc", w:1.2, dash:true  },
   { source:"qimin",        target:"yuqianqian",    type:"romantic", label:"Obsessive pursuit / threat",                color:"#ff8c00", w:1.5, dash:true  },
+  { source:"suiyuanqing",  target:"shisanniang",   type:"romantic", label:"Dangerous attraction / alliance",           color:"#ff8c00", w:1.3, dash:false },
+  { source:"cuiqianjin",   target:"songyan",       type:"romantic", label:"Prospective engagement target",             color:"#9966cc", w:1.0, dash:true  },
   // Enemy
   { source:"chancellorwei",target:"xiezheng",      type:"enemy",    label:"17-yr blood feud / hunts him",              color:"#ff2222", w:2.0, dash:false },
   { source:"chancellorwei",target:"changyu",       type:"enemy",    label:"Orders assassination (letter)",             color:"#ff2222", w:1.6, dash:false },
@@ -834,6 +940,15 @@ const links = [
   { source:"weixuan",      target:"hejingyuan",    type:"enemy",    label:"Had him arrested on false charges",         color:"#ff6600", w:1.4, dash:false },
   { source:"qimin",        target:"baoer",         type:"enemy",    label:"Claims paternity (threat)",                 color:"#ffaa44", w:1.3, dash:true  },
   { source:"emperorqisheng",target:"chancellorwei",type:"enemy",    label:"Figurehead — Wei holds real power",         color:"#aa4444", w:1.2, dash:true  },
+  { source:"suiyuanqing",  target:"xiezheng",      type:"enemy",    label:"Baxia ransom / rebel commander",            color:"#ff2222", w:1.8, dash:false },
+  { source:"suiyuanqing",  target:"changyu",       type:"enemy",    label:"Hunts her after Lin'an",                    color:"#ff2222", w:1.6, dash:false },
+  { source:"suiyuanqing",  target:"changning",     type:"enemy",    label:"Hostage against Xie Zheng",                 color:"#ff2222", w:1.4, dash:false },
+  { source:"suiyuanqing",  target:"constablewang", type:"enemy",    label:"Kills during massacre",                     color:"#ff2222", w:1.1, dash:true  },
+  { source:"suiyuanqing",  target:"cuiqianjin",    type:"enemy",    label:"Kills for refusing to betray Changyu",      color:"#ff2222", w:1.1, dash:true  },
+  { source:"suiyuanqing",  target:"magistratecui", type:"enemy",    label:"Kills and displays body",                   color:"#ff2222", w:1.1, dash:true  },
+  { source:"suiyuanqing",  target:"songyue",       type:"enemy",    label:"Kills despite her betrayal",                color:"#ff2222", w:1.0, dash:true  },
+  { source:"shisanniang",  target:"changyu",       type:"enemy",    label:"Vows revenge for her brother",              color:"#ff2222", w:1.2, dash:false },
+  { source:"weisheng",     target:"xiezheng",      type:"enemy",    label:"Surveils and tests him",                    color:"#ff6600", w:1.2, dash:true  },
   // Conflict
   { source:"magistratecui",target:"changyu",       type:"conflict", label:"Unjustly detains",                          color:"#ff8c00", w:1.2, dash:true  },
   { source:"magistratecui",target:"xiezheng",      type:"conflict", label:"Issues arrest warrant",                     color:"#ff8c00", w:1.2, dash:true  },
@@ -846,6 +961,11 @@ const links = [
   { source:"jinyuanbao",   target:"changyu",       type:"conflict", label:"Thug sent by uncle",                        color:"#888888", w:1.0, dash:true  },
   { source:"madamkang",    target:"changyu",       type:"conflict", label:"Public slander (ep 1)",                     color:"#888888", w:1.0, dash:true  },
   { source:"zhaoxun",      target:"yuqianqian",    type:"conflict", label:"Introduced Qi Min to her",                  color:"#ff8c00", w:1.1, dash:true  },
+  { source:"auntmi",       target:"changyu",       type:"conflict", label:"Confronted over neglect",                   color:"#887744", w:1.0, dash:true  },
+  { source:"cuiqianjin",   target:"changyu",       type:"conflict", label:"Romantic-social rivalry turns pact",        color:"#ff8c00", w:1.0, dash:true  },
+  { source:"qingfengsecond",target:"changyu",      type:"conflict", label:"Shoots her horse / killed by her",          color:"#ff6600", w:1.1, dash:false },
+  { source:"sunzhuangzhuang",target:"changyu",     type:"conflict", label:"Quarry bully struck down",                  color:"#ff8c00", w:1.0, dash:true  },
+  { source:"sunzhuangzhuang",target:"taoyi",       type:"conflict", label:"Insults him in food line",                  color:"#ff8c00", w:1.0, dash:true  },
 ];
 
 // Type → human label / order
@@ -1185,7 +1305,7 @@ function hideTip() { tip.style.display = "none"; }
 
 // ── Faction & EP filters ─────────────────────────────────
 let activeG = "all", activeEp = null;
-const epRanges = { 1:[1,6], 7:[7,9], 10:[10,11] };
+const epRanges = { 1:[1,6], 7:[7,9], 10:[10,16], 17:[17,22] };
 
 document.querySelectorAll("#faction-filters .filter-pill").forEach(p => {
   p.addEventListener("click", () => {
