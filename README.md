@@ -1,6 +1,6 @@
 # 逐玉 · Pursuit of Jade — Character Map
 
-An interactive character relationship map for the Chinese drama **Pursuit of Jade (逐玉)**, covering Episodes 1–22.
+An interactive character relationship map for the Chinese drama **Pursuit of Jade (逐玉)**, covering Episodes 1–40 with full-series spoilers.
 
 Built with [D3.js](https://d3js.org/) as a single self-contained HTML file. No build step required.
 
@@ -33,4 +33,4 @@ Or visit the live hosted version on Cloudflare Pages.
 
 ## Characters
 
-49 characters across 5 groups: Protagonists, Neutral & Allies, Antagonists, Minor, and Deceased.
+57 characters across 5 groups: Protagonists, Neutral & Allies, Antagonists, Minor, and Deceased.
